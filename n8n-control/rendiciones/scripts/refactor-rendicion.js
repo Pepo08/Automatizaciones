@@ -12,7 +12,7 @@
  *   6. Limpia código muerto (comentarios) en Validador de datos pdf/fotos
  *   7. Limpia código muerto en idempotencia img code
  *
- * Uso:  node scripts/refactor-rendicion.js
+ * Uso:  node rendiciones/scripts/refactor-rendicion.js
  */
 
 const fs = require('fs');
@@ -23,6 +23,7 @@ const path = require('path');
 // ────────────────────────────────────────────────────────────
 const WORKFLOW_PATH = path.resolve(
   __dirname, '..', 'workflows', 'clean', 'rendicion-de-gastos.json'
+  // __dirname = rendiciones/scripts/, '..' = rendiciones/
 );
 
 // ────────────────────────────────────────────────────────────

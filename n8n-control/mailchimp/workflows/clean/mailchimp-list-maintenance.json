@@ -1,0 +1,627 @@
+{
+  "id": "yHTghm6d5J49jm92",
+  "name": "mailChimp mantenimiento",
+  "active": false,
+  "versionId": "9142b9f1-0c49-4214-8adc-5f14ed5f50ed",
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "tags": [],
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        250,
+        300
+      ],
+      "id": "mc-node-001",
+      "name": "Manual Trigger"
+    },
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "cfg-01",
+              "name": "DRY_RUN",
+              "value": true,
+              "type": "boolean"
+            },
+            {
+              "id": "cfg-02",
+              "name": "MAILCHIMP_LIST_ID",
+              "value": "{{TU_LIST_ID}}",
+              "type": "string"
+            },
+            {
+              "id": "cfg-03",
+              "name": "DEFAULT_STATUS",
+              "value": "subscribed",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        480,
+        300
+      ],
+      "id": "mc-node-002",
+      "name": "Config"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Contactos de ejemplo para demo y testing\n// REEMPLAZAR este nodo por Google Sheets, HTTP Request, CSV u otra fuente real\n// La estructura de salida debe mantener los mismos campos\n\nconst contacts = [\n  {\n    email: \"juan.perez@example.com\",\n    first_name: \"Juan\",\n    last_name: \"Pérez\",\n    phone: \"+5491155551234\",\n    birthday: \"1985-03-15\",\n    zone: \"Litoral\",\n    city: \"Rosario\",\n    country: \"Argentina\",\n    customer_type: \"cliente\",\n    role: \"comprador\",\n    representative: \"Carlos Ruiz\",\n    status: \"active\",\n    tags: [\"cliente\", \"litoral\", \"activo\"],\n    source_system: \"crm_demo\",\n    updated_at: \"2026-03-20T10:00:00Z\"\n  },\n  {\n    email: \"maria.gomez@example.com\",\n    first_name: \"María\",\n    last_name: \"Gómez\",\n    phone: \"+5491155555678\",\n    birthday: \"1990-07-22\",\n    zone: \"Pampeana\",\n    city: \"Buenos Aires\",\n    country: \"Argentina\",\n    customer_type: \"cliente\",\n    role: \"comprador\",\n    representative: \"Ana López\",\n    status: \"active\",\n    tags: [\"cliente\", \"pampeana\"],\n    source_system: \"crm_demo\",\n    updated_at: \"2026-03-19T15:30:00Z\"\n  },\n  {\n    email: \"carlos.lopez@example.com\",\n    first_name: \"Carlos\",\n    last_name: \"López\",\n    phone: \"\",\n    birthday: \"\",\n    zone: \"Cuyo\",\n    city: \"Mendoza\",\n    country: \"Argentina\",\n    customer_type: \"prospecto\",\n    role: \"\",\n    representative: \"Carlos Ruiz\",\n    status: \"active\",\n    tags: [\"prospecto\", \"cuyo\"],\n    source_system: \"crm_demo\",\n    updated_at: \"2026-03-18T09:00:00Z\"\n  },\n  {\n    email: \"  Ana.Martinez@Example.COM  \",\n    first_name: \"  ana \",\n    last_name: \" martinez\",\n    phone: \"+5491155559999\",\n    birthday: \"1978-12-01\",\n    zone: \"NOA\",\n    city: \"Tucumán\",\n    country: \"Argentina\",\n    customer_type: \"representante\",\n    role: \"representante\",\n    representative: \"\",\n    status: \"active\",\n    tags: [\"representante\", \"noa\"],\n    source_system: \"crm_demo\",\n    updated_at: \"2026-03-15T11:00:00Z\"\n  },\n  {\n    email: \"roberto.diaz@example.com\",\n    first_name: \"Roberto\",\n    last_name: \"Díaz\",\n    phone: \"+5491155552222\",\n    birthday: \"1992-05-10\",\n    zone: \"Litoral\",\n    city: \"Santa Fe\",\n    country: \"Argentina\",\n    customer_type: \"cliente\",\n    role: \"comprador\",\n    representative: \"Carlos Ruiz\",\n    status: \"active\",\n    tags: [\"cliente\", \"litoral\", \"premium\"],\n    source_system: \"crm_demo\",\n    updated_at: \"2026-03-20T08:00:00Z\"\n  },\n  {\n    email: \"invalido-sin-arroba\",\n    first_name: \"Test\",\n    last_name: \"Invalido\",\n    phone: \"\",\n    birthday: \"\",\n    zone: \"\",\n    city: \"\",\n    country: \"\",\n    customer_type: \"\",\n    role: \"\",\n    representative: \"\",\n    status: \"\",\n    tags: [],\n    source_system: \"crm_demo\",\n    updated_at: \"\"\n  },\n  {\n    email: \"juan.perez@example.com\",\n    first_name: \"Juan Duplicado\",\n    last_name: \"Pérez\",\n    phone: \"\",\n    birthday: \"\",\n    zone: \"\",\n    city: \"\",\n    country: \"\",\n    customer_type: \"\",\n    role: \"\",\n    representative: \"\",\n    status: \"\",\n    tags: [],\n    source_system: \"crm_demo\",\n    updated_at: \"\"\n  },\n  {\n    email: \"laura.fernandez@example.com\",\n    first_name: \"Laura\",\n    last_name: \"Fernández\",\n    phone: \"+5491155553333\",\n    birthday: \"1988-01-25\",\n    zone: \"Patagonia\",\n    city: \"Neuquén\",\n    country: \"Argentina\",\n    customer_type: \"cliente\",\n    role: \"comprador\",\n    representative: \"Ana López\",\n    status: \"active\",\n    tags: [\"cliente\", \"patagonia\"],\n    source_system: \"crm_demo\",\n    updated_at: \"2026-03-21T14:00:00Z\"\n  }\n];\n\nreturn contacts.map(c => ({ json: c }));"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        720,
+        300
+      ],
+      "id": "mc-node-003",
+      "name": "Load Source Contacts"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Normaliza todos los campos al esquema estándar\n// Limpia espacios, normaliza emails a lowercase, formatea birthday para Mailchimp\nconst items = $input.all();\nconst results = [];\n\nfor (const item of items) {\n  const raw = item.json;\n\n  const email = (raw.email || '').trim().toLowerCase();\n\n  // Normalizar birthday a formato MM/DD (requerido por Mailchimp)\n  let birthday = '';\n  if (raw.birthday) {\n    const d = new Date(raw.birthday);\n    if (!isNaN(d.getTime())) {\n      birthday = String(d.getUTCMonth() + 1).padStart(2, '0') + '/' + String(d.getUTCDate()).padStart(2, '0');\n    }\n  }\n\n  results.push({\n    json: {\n      email,\n      first_name: (raw.first_name || '').trim(),\n      last_name: (raw.last_name || '').trim(),\n      phone: (raw.phone || '').trim(),\n      birthday,\n      birthday_raw: raw.birthday || '',\n      zone: (raw.zone || '').trim(),\n      city: (raw.city || '').trim(),\n      country: (raw.country || '').trim(),\n      customer_type: (raw.customer_type || '').trim().toLowerCase(),\n      role: (raw.role || '').trim().toLowerCase(),\n      representative: (raw.representative || '').trim(),\n      status: (raw.status || '').trim().toLowerCase(),\n      tags: Array.isArray(raw.tags) ? raw.tags.map(t => String(t).trim().toLowerCase()) : [],\n      merge_fields: raw.merge_fields || {},\n      source_system: (raw.source_system || '').trim(),\n      updated_at: raw.updated_at || '',\n      external_id: raw.external_id || ''\n    }\n  });\n}\n\nreturn results;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        960,
+        300
+      ],
+      "id": "mc-node-004",
+      "name": "Normalize Contacts"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Valida emails, detecta duplicados, separa inválidos\nconst items = $input.all();\nconst seen = new Set();\nconst valid = [];\nconst invalid = [];\n\nfor (const item of items) {\n  const c = item.json;\n\n  // Validar formato de email\n  if (!c.email || !/^[^\\s@]+@[^\\s@]+\\.[^\\s@]+$/.test(c.email)) {\n    invalid.push({ ...c, _reason: 'email_invalido' });\n    continue;\n  }\n\n  // Deduplicar por email\n  if (seen.has(c.email)) {\n    invalid.push({ ...c, _reason: 'duplicado' });\n    continue;\n  }\n  seen.add(c.email);\n\n  valid.push(c);\n}\n\nreturn [{ json: {\n  valid,\n  invalid,\n  stats: { total_input: items.length, valid: valid.length, invalid: invalid.length }\n} }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1200,
+        300
+      ],
+      "id": "mc-node-005",
+      "name": "Validate & Deduplicate"
+    },
+    {
+      "parameters": {
+        "resource": "member",
+        "operation": "getAll",
+        "list": "={{ $('Config').first().json.MAILCHIMP_LIST_ID }}",
+        "returnAll": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mailchimp",
+      "typeVersion": 1,
+      "position": [
+        1440,
+        300
+      ],
+      "id": "mc-node-006",
+      "name": "Mailchimp: Get Audience",
+      "credentials": {
+        "mailchimpApi": {
+          "id": "COMPLETAR",
+          "name": "Mailchimp API"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// Compara contactos validados contra la audiencia de Mailchimp\n// Clasifica en: toCreate, toUpdate, toUnsubscribe, unchanged\nconst { valid, invalid } = $('Validate & Deduplicate').first().json;\n\n// El nodo nativo Mailchimp getAll devuelve un item por miembro\nconst mcMembers = $('Mailchimp: Get Audience').all().map(i => i.json);\n\n// Mapa de Mailchimp indexado por email\nconst mcMap = new Map();\nfor (const m of mcMembers) {\n  mcMap.set(m.email_address.toLowerCase(), m);\n}\n\nconst sourceEmails = new Set(valid.map(c => c.email));\nconst toCreate = [];\nconst toUpdate = [];\nconst toUnsubscribe = [];\nconst unchanged = [];\n\nfor (const contact of valid) {\n  const existing = mcMap.get(contact.email);\n\n  if (!existing) {\n    toCreate.push(contact);\n    continue;\n  }\n\n  // Comparar merge fields para detectar cambios\n  const mf = existing.merge_fields || {};\n  const needsUpdate =\n    (contact.first_name && contact.first_name !== (mf.FNAME || '')) ||\n    (contact.last_name && contact.last_name !== (mf.LNAME || '')) ||\n    (contact.phone && contact.phone !== (mf.PHONE || '')) ||\n    (contact.birthday && contact.birthday !== (mf.BIRTHDAY || '')) ||\n    (contact.zone && contact.zone !== (mf.ZONE || '')) ||\n    (contact.city && contact.city !== (mf.CITY || '')) ||\n    (contact.country && contact.country !== (mf.COUNTRY || '')) ||\n    (contact.customer_type && contact.customer_type !== (mf.CTYPE || '')) ||\n    (contact.role && contact.role !== (mf.ROLE || '')) ||\n    (contact.representative && contact.representative !== (mf.REP || ''));\n\n  if (needsUpdate) {\n    toUpdate.push({ ...contact, _mailchimp_id: existing.id });\n  } else {\n    unchanged.push(contact);\n  }\n}\n\n// Contactos en Mailchimp que no están en la fuente y están suscritos\nfor (const [email, member] of mcMap) {\n  if (!sourceEmails.has(email) && member.status === 'subscribed') {\n    toUnsubscribe.push({\n      email,\n      first_name: member.merge_fields?.FNAME || '',\n      last_name: member.merge_fields?.LNAME || '',\n      _mailchimp_id: member.id,\n      _current_status: member.status\n    });\n  }\n}\n\nconst summary = {\n  source_total: valid.length,\n  mailchimp_total: mcMembers.length,\n  to_create: toCreate.length,\n  to_update: toUpdate.length,\n  to_unsubscribe: toUnsubscribe.length,\n  unchanged: unchanged.length,\n  invalid: invalid.length,\n  timestamp: new Date().toISOString()\n};\n\nreturn [{ json: { toCreate, toUpdate, toUnsubscribe, unchanged, invalid, summary } }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1680,
+        300
+      ],
+      "id": "mc-node-007",
+      "name": "Compare & Classify"
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 2
+          },
+          "conditions": [
+            {
+              "id": "cond-dryrun",
+              "leftValue": "={{ $('Config').first().json.DRY_RUN }}",
+              "rightValue": "",
+              "operator": {
+                "type": "boolean",
+                "operation": "true",
+                "singleValue": true
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [
+        1920,
+        300
+      ],
+      "id": "mc-node-008",
+      "name": "Check DRY_RUN"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Reporte detallado de preview sin ejecutar cambios\nconst data = $('Compare & Classify').first().json;\n\nreturn [{ json: {\n  mode: 'DRY RUN — Sin cambios aplicados en Mailchimp',\n  summary: data.summary,\n  detail: {\n    to_create: {\n      count: data.toCreate.length,\n      samples: data.toCreate.slice(0, 5).map(c => ({\n        email: c.email,\n        name: c.first_name + ' ' + c.last_name,\n        zone: c.zone,\n        type: c.customer_type,\n        tags: c.tags\n      }))\n    },\n    to_update: {\n      count: data.toUpdate.length,\n      samples: data.toUpdate.slice(0, 5).map(c => ({\n        email: c.email,\n        name: c.first_name + ' ' + c.last_name\n      }))\n    },\n    to_unsubscribe: {\n      count: data.toUnsubscribe.length,\n      samples: data.toUnsubscribe.slice(0, 5).map(c => ({\n        email: c.email,\n        name: c.first_name + ' ' + c.last_name\n      }))\n    },\n    unchanged: { count: data.unchanged.length },\n    invalid: {\n      count: data.invalid.length,\n      samples: data.invalid.slice(0, 5).map(c => ({\n        email: c.email || '(vacío)',\n        reason: c._reason\n      }))\n    }\n  },\n  next_step: 'Para ejecutar cambios reales, cambiar DRY_RUN a false en Config y volver a ejecutar'\n} }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2200,
+        100
+      ],
+      "id": "mc-node-009",
+      "name": "Build Preview Report"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Prepara items individuales para los nodos nativos de Mailchimp\n// Cada item lleva los datos del contacto + _action para el Switch\nconst data = $('Compare & Classify').first().json;\n\nconst items = [];\n\n// Items para crear\nfor (const c of data.toCreate) {\n  items.push({ json: {\n    ...c,\n    _action: 'create',\n    tags_csv: (c.tags || []).join(',')\n  }});\n}\n\n// Items para actualizar\nfor (const c of data.toUpdate) {\n  items.push({ json: {\n    ...c,\n    _action: 'update'\n  }});\n}\n\n// Items para desuscribir\nfor (const c of data.toUnsubscribe) {\n  items.push({ json: {\n    ...c,\n    _action: 'unsubscribe'\n  }});\n}\n\n// Item de reporte (garantiza que Build Report se ejecute siempre)\nitems.push({ json: {\n  _action: 'report',\n  summary: data.summary,\n  creates_sent: data.toCreate.length,\n  updates_sent: data.toUpdate.length,\n  unsubscribes_sent: data.toUnsubscribe.length,\n  unchanged_count: data.unchanged.length,\n  invalid_count: data.invalid.length\n}});\n\nreturn items;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2200,
+        500
+      ],
+      "id": "mc-node-010",
+      "name": "Prepare Items for Mailchimp"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "rule-create",
+                    "leftValue": "={{ $json._action }}",
+                    "rightValue": "create",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Create"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "rule-update",
+                    "leftValue": "={{ $json._action }}",
+                    "rightValue": "update",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Update"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "rule-unsub",
+                    "leftValue": "={{ $json._action }}",
+                    "rightValue": "unsubscribe",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Unsubscribe"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 2
+                },
+                "conditions": [
+                  {
+                    "id": "rule-report",
+                    "leftValue": "={{ $json._action }}",
+                    "rightValue": "report",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Report"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3,
+      "position": [
+        2480,
+        500
+      ],
+      "id": "mc-node-011",
+      "name": "Route by Action"
+    },
+    {
+      "parameters": {
+        "resource": "member",
+        "operation": "create",
+        "list": "={{ $('Config').first().json.MAILCHIMP_LIST_ID }}",
+        "email": "={{ $json.email }}",
+        "status": "={{ $('Config').first().json.DEFAULT_STATUS }}",
+        "mergeFieldsUi": {
+          "mergeFieldsValues": [
+            {
+              "name": "FNAME",
+              "value": "={{ $json.first_name }}"
+            },
+            {
+              "name": "LNAME",
+              "value": "={{ $json.last_name }}"
+            },
+            {
+              "name": "PHONE",
+              "value": "={{ $json.phone }}"
+            },
+            {
+              "name": "BIRTHDAY",
+              "value": "={{ $json.birthday }}"
+            },
+            {
+              "name": "ZONE",
+              "value": "={{ $json.zone }}"
+            },
+            {
+              "name": "CITY",
+              "value": "={{ $json.city }}"
+            },
+            {
+              "name": "COUNTRY",
+              "value": "={{ $json.country }}"
+            },
+            {
+              "name": "CTYPE",
+              "value": "={{ $json.customer_type }}"
+            },
+            {
+              "name": "ROLE",
+              "value": "={{ $json.role }}"
+            },
+            {
+              "name": "REP",
+              "value": "={{ $json.representative }}"
+            }
+          ]
+        },
+        "options": {
+          "tags": "={{ $json.tags_csv }}"
+        }
+      },
+      "type": "n8n-nodes-base.mailchimp",
+      "typeVersion": 1,
+      "position": [
+        2780,
+        240
+      ],
+      "id": "mc-node-012",
+      "name": "Mailchimp: Create Member",
+      "credentials": {
+        "mailchimpApi": {
+          "id": "COMPLETAR",
+          "name": "Mailchimp API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "resource": "member",
+        "operation": "update",
+        "list": "={{ $('Config').first().json.MAILCHIMP_LIST_ID }}",
+        "email": "={{ $json.email }}",
+        "mergeFieldsUi": {
+          "mergeFieldsValues": [
+            {
+              "name": "FNAME",
+              "value": "={{ $json.first_name }}"
+            },
+            {
+              "name": "LNAME",
+              "value": "={{ $json.last_name }}"
+            },
+            {
+              "name": "PHONE",
+              "value": "={{ $json.phone }}"
+            },
+            {
+              "name": "BIRTHDAY",
+              "value": "={{ $json.birthday }}"
+            },
+            {
+              "name": "ZONE",
+              "value": "={{ $json.zone }}"
+            },
+            {
+              "name": "CITY",
+              "value": "={{ $json.city }}"
+            },
+            {
+              "name": "COUNTRY",
+              "value": "={{ $json.country }}"
+            },
+            {
+              "name": "CTYPE",
+              "value": "={{ $json.customer_type }}"
+            },
+            {
+              "name": "ROLE",
+              "value": "={{ $json.role }}"
+            },
+            {
+              "name": "REP",
+              "value": "={{ $json.representative }}"
+            }
+          ]
+        },
+        "updateFields": {}
+      },
+      "type": "n8n-nodes-base.mailchimp",
+      "typeVersion": 1,
+      "position": [
+        2780,
+        480
+      ],
+      "id": "mc-node-013",
+      "name": "Mailchimp: Update Member",
+      "credentials": {
+        "mailchimpApi": {
+          "id": "COMPLETAR",
+          "name": "Mailchimp API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "resource": "member",
+        "operation": "update",
+        "list": "={{ $('Config').first().json.MAILCHIMP_LIST_ID }}",
+        "email": "={{ $json.email }}",
+        "updateFields": {
+          "status": "unsubscribed"
+        }
+      },
+      "type": "n8n-nodes-base.mailchimp",
+      "typeVersion": 1,
+      "position": [
+        2780,
+        720
+      ],
+      "id": "mc-node-014",
+      "name": "Mailchimp: Unsubscribe",
+      "credentials": {
+        "mailchimpApi": {
+          "id": "COMPLETAR",
+          "name": "Mailchimp API"
+        }
+      },
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Reporte final de ejecución\nconst data = $input.first().json;\n\nreturn [{ json: {\n  mode: 'APPLY — Cambios enviados a Mailchimp',\n  summary: data.summary,\n  actions_sent: {\n    creates: data.creates_sent,\n    updates: data.updates_sent,\n    unsubscribes: data.unsubscribes_sent,\n    unchanged: data.unchanged_count,\n    invalid: data.invalid_count\n  },\n  note: 'Revisar la salida de cada nodo Mailchimp (Create/Update/Unsubscribe) en el historial de ejecución para ver resultados individuales',\n  timestamp: new Date().toISOString()\n} }];"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2780,
+        960
+      ],
+      "id": "mc-node-015",
+      "name": "Build Execution Report"
+    }
+  ],
+  "connections": {
+    "Manual Trigger": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "Load Source Contacts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Load Source Contacts": {
+      "main": [
+        [
+          {
+            "node": "Normalize Contacts",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalize Contacts": {
+      "main": [
+        [
+          {
+            "node": "Validate & Deduplicate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Validate & Deduplicate": {
+      "main": [
+        [
+          {
+            "node": "Mailchimp: Get Audience",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Mailchimp: Get Audience": {
+      "main": [
+        [
+          {
+            "node": "Compare & Classify",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Compare & Classify": {
+      "main": [
+        [
+          {
+            "node": "Check DRY_RUN",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Check DRY_RUN": {
+      "main": [
+        [
+          {
+            "node": "Build Preview Report",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Prepare Items for Mailchimp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Prepare Items for Mailchimp": {
+      "main": [
+        [
+          {
+            "node": "Route by Action",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Route by Action": {
+      "main": [
+        [
+          {
+            "node": "Mailchimp: Create Member",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mailchimp: Update Member",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Mailchimp: Unsubscribe",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Build Execution Report",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  }
+}

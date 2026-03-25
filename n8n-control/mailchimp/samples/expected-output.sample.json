@@ -1,0 +1,53 @@
+{
+  "_description": "Ejemplo de salida del nodo Build Preview Report (modo DRY RUN con audiencia vacía)",
+  "mode": "DRY RUN — Sin cambios aplicados en Mailchimp",
+  "summary": {
+    "source_total": 6,
+    "mailchimp_total": 0,
+    "to_create": 6,
+    "to_update": 0,
+    "to_unsubscribe": 0,
+    "unchanged": 0,
+    "invalid": 2,
+    "timestamp": "2026-03-24T22:00:00.000Z"
+  },
+  "detail": {
+    "to_create": {
+      "count": 6,
+      "samples": [
+        {
+          "email": "juan.perez@example.com",
+          "name": "Juan Pérez",
+          "zone": "Litoral",
+          "type": "cliente",
+          "tags": ["cliente", "litoral", "activo"]
+        },
+        {
+          "email": "maria.gomez@example.com",
+          "name": "María Gómez",
+          "zone": "Pampeana",
+          "type": "cliente",
+          "tags": ["cliente", "pampeana"]
+        },
+        {
+          "email": "carlos.lopez@example.com",
+          "name": "Carlos López",
+          "zone": "Cuyo",
+          "type": "prospecto",
+          "tags": ["prospecto", "cuyo"]
+        }
+      ]
+    },
+    "to_update": { "count": 0, "samples": [] },
+    "to_unsubscribe": { "count": 0, "samples": [] },
+    "unchanged": { "count": 0 },
+    "invalid": {
+      "count": 2,
+      "samples": [
+        { "email": "invalido-sin-arroba", "reason": "email_invalido" },
+        { "email": "juan.perez@example.com", "reason": "duplicado" }
+      ]
+    }
+  },
+  "next_step": "Para ejecutar cambios reales, cambiar DRY_RUN a false en Config y volver a ejecutar"
+}
