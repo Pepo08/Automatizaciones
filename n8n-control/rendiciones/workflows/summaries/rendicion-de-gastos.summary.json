@@ -2,8 +2,8 @@
   "id": "brquKOgljLZruZBl",
   "name": "Rendicion de gastos",
   "active": false,
-  "versionId": "4260b33a-dbf9-4e23-a740-52c054d6f56b",
-  "nodeCount": 79,
+  "versionId": "ffdf9695-eb8d-4016-9a4e-89775110fc57",
+  "nodeCount": 78,
   "triggerCount": 1,
   "triggerNodes": [
     {
@@ -75,7 +75,6 @@
     "iterar_items_gasto",
     "Subir descripcion text",
     "es text?",
-    "validacion_datos_text",
     "validacion_datos_pdf_img",
     "Separador por categorias.",
     "agregar_items_con_iva",
@@ -118,6 +117,144 @@
   ],
   "connections": [
     {
+      "from": "Analyze image",
+      "to": "Normalize Extracted Image Data",
+      "type": "main",
+      "outputIndex": 0
+    },
+    {
+      "from": "Extract from File",
+      "to": "Normalize Extracted PDF Data",
+      "type": "main",
+      "outputIndex": 0
+    },
+    {
+      "from": "Iva agregado",
+      "to": "agregar_items_con_iva",
+      "type": "main",
+      "outputIndex": 0
+    },
+    {
+      "from": "Messages?",
+      "to": "parsear_mensajes_telegram",
+      "type": "main",
+      "outputIndex": 0
+    },
+    {
+      "from": "Messages?",
+      "to": "descarte_sin_mensajes",
+      "type": "main",
+      "outputIndex": 1
+    },
+    {
+      "from": "Normalizacion",
+      "to": "Messages?",
+      "type": "main",
+      "outputIndex": 0
+    },
+    {
+      "from": "Normalize Extracted Image Data",
+      "to": "obtener_datos_idemp_img",
+      "type": "main",
+      "outputIndex": 0
+    },
+    {
+      "from": "Normalize Extracted PDF Data",
+      "to": "obtener_datos_idemp_pdf",
+      "type": "main",
+      "outputIndex": 0
+    },
+    {
+      "from": "Normalize Extracted Text Data",
+      "to": "decision_OK",
+      "type": "main",
+      "outputIndex": 0
+    },
+    {
+      "from": "Normalize Items",
+      "to": "Iva agregado",
+      "type": "main",
+      "outputIndex": 0
+    },
+    {
+      "from": "Reconstruccion Normalize Items",
+      "to": "Subir descripcion pdf/img items",
+      "type": "main",
+      "outputIndex": 0
+    },
+    {
+      "from": "Separador por categorias.",
+      "to": "iterar_items_gasto",
+      "type": "main",
+      "outputIndex": 0
+    },
+    {
+      "from": "Subir File Item",
+      "to": "se subio?",
+      "type": "main",
+      "outputIndex": 0
+    },
+    {
+      "from": "Subir File Items",
+      "to": "se subio?",
+      "type": "main",
+      "outputIndex": 0
+    },
+    {
+      "from": "Subir descripcion pdf/img item",
+      "to": "descargar_archivo_item",
+      "type": "main",
+      "outputIndex": 0
+    },
+    {
+      "from": "Subir descripcion pdf/img items",
+      "to": "descargar_archivo_items",
+      "type": "main",
+      "outputIndex": 0
+    },
+    {
+      "from": "Subir descripcion text",
+      "to": "enviar_rendicion",
+      "type": "main",
+      "outputIndex": 0
+    },
+    {
+      "from": "Switch",
+      "to": "descargar_pdf",
+      "type": "main",
+      "outputIndex": 0
+    },
+    {
+      "from": "Switch",
+      "to": "descargar_imagen",
+      "type": "main",
+      "outputIndex": 1
+    },
+    {
+      "from": "Switch",
+      "to": "normalizar texto",
+      "type": "main",
+      "outputIndex": 2
+    },
+    {
+      "from": "Switch",
+      "to": "descarte_tipo_desconocido",
+      "type": "main",
+      "outputIndex": 3
+    },
+    {
+      "from": "Telegram Trigger",
+      "to": "Normalizacion",
+      "type": "main",
+      "outputIndex": 0
+    },
+    {
+      "from": "Validador de datos pdf/fotos",
+      "to": "validacion_datos_pdf_img",
+      "type": "main",
+      "outputIndex": 0
+    },
+    {
       "from": "agente_chat",
       "to": "respuesta_chat",
       "type": "main",
@@ -142,8 +279,8 @@
       "outputIndex": 0
     },
     {
-      "from": "Analyze image",
-      "to": "Normalize Extracted Image Data",
+      "from": "chat o rendicion?",
+      "to": "obtener_conversacion",
       "type": "main",
       "outputIndex": 0
     },
@@ -152,12 +289,6 @@
       "to": "agente_parser_rendicion",
       "type": "main",
       "outputIndex": 1
-    },
-    {
-      "from": "chat o rendicion?",
-      "to": "obtener_conversacion",
-      "type": "main",
-      "outputIndex": 0
     },
     {
       "from": "clasificar intención",
@@ -185,15 +316,15 @@
     },
     {
       "from": "decision_OK",
-      "to": "respuesta_aclaracion",
-      "type": "main",
-      "outputIndex": 1
-    },
-    {
-      "from": "decision_OK",
       "to": "Separador por categorias.",
       "type": "main",
       "outputIndex": 0
+    },
+    {
+      "from": "decision_OK",
+      "to": "respuesta_aclaracion",
+      "type": "main",
+      "outputIndex": 1
     },
     {
       "from": "descargar_archivo_item",
@@ -227,7 +358,7 @@
     },
     {
       "from": "es text?",
-      "to": "validacion_datos_text",
+      "to": "crear_rendicion",
       "type": "main",
       "outputIndex": 0
     },
@@ -239,25 +370,13 @@
     },
     {
       "from": "es_del_usuario",
-      "to": "iterar_rendiciones",
-      "type": "main",
-      "outputIndex": 1
-    },
-    {
-      "from": "es_del_usuario",
       "to": "Switch",
       "type": "main",
       "outputIndex": 0
     },
     {
-      "from": "Extract from File",
-      "to": "Normalize Extracted PDF Data",
-      "type": "main",
-      "outputIndex": 0
-    },
-    {
-      "from": "hay un file?",
-      "to": "Normalize Items",
+      "from": "es_del_usuario",
+      "to": "iterar_rendiciones",
       "type": "main",
       "outputIndex": 1
     },
@@ -266,6 +385,12 @@
       "to": "Subir descripcion text",
       "type": "main",
       "outputIndex": 0
+    },
+    {
+      "from": "hay un file?",
+      "to": "Normalize Items",
+      "type": "main",
+      "outputIndex": 1
     },
     {
       "from": "idempotencia img code",
@@ -293,15 +418,15 @@
     },
     {
       "from": "idempotencia text",
-      "to": "iterar_items_gasto",
-      "type": "main",
-      "outputIndex": 1
-    },
-    {
-      "from": "idempotencia text",
       "to": "ya fue cargada",
       "type": "main",
       "outputIndex": 0
+    },
+    {
+      "from": "idempotencia text",
+      "to": "iterar_items_gasto",
+      "type": "main",
+      "outputIndex": 1
     },
     {
       "from": "idempotencia text code",
@@ -311,15 +436,15 @@
     },
     {
       "from": "item o items?",
-      "to": "Reconstruccion Normalize Items",
-      "type": "main",
-      "outputIndex": 1
-    },
-    {
-      "from": "item o items?",
       "to": "Subir descripcion pdf/img item",
       "type": "main",
       "outputIndex": 0
+    },
+    {
+      "from": "item o items?",
+      "to": "Reconstruccion Normalize Items",
+      "type": "main",
+      "outputIndex": 1
     },
     {
       "from": "iterar_items_gasto",
@@ -346,24 +471,6 @@
       "outputIndex": 1
     },
     {
-      "from": "Iva agregado",
-      "to": "agregar_items_con_iva",
-      "type": "main",
-      "outputIndex": 0
-    },
-    {
-      "from": "Messages?",
-      "to": "descarte_sin_mensajes",
-      "type": "main",
-      "outputIndex": 1
-    },
-    {
-      "from": "Messages?",
-      "to": "parsear_mensajes_telegram",
-      "type": "main",
-      "outputIndex": 0
-    },
-    {
       "from": "modelo_chat_conversacional",
       "to": "agente_chat",
       "type": "ai_languageModel",
@@ -382,38 +489,8 @@
       "outputIndex": 0
     },
     {
-      "from": "Normalizacion",
-      "to": "Messages?",
-      "type": "main",
-      "outputIndex": 0
-    },
-    {
       "from": "normalizar texto",
       "to": "clasificar intención",
-      "type": "main",
-      "outputIndex": 0
-    },
-    {
-      "from": "Normalize Extracted Image Data",
-      "to": "obtener_datos_idemp_img",
-      "type": "main",
-      "outputIndex": 0
-    },
-    {
-      "from": "Normalize Extracted PDF Data",
-      "to": "obtener_datos_idemp_pdf",
-      "type": "main",
-      "outputIndex": 0
-    },
-    {
-      "from": "Normalize Extracted Text Data",
-      "to": "decision_OK",
-      "type": "main",
-      "outputIndex": 0
-    },
-    {
-      "from": "Normalize Items",
-      "to": "Iva agregado",
       "type": "main",
       "outputIndex": 0
     },
@@ -454,12 +531,6 @@
       "outputIndex": 0
     },
     {
-      "from": "Reconstruccion Normalize Items",
-      "to": "Subir descripcion pdf/img items",
-      "type": "main",
-      "outputIndex": 0
-    },
-    {
       "from": "respuesta_aclaracion",
       "to": "actualizar_conv_post_aclaracion",
       "type": "main",
@@ -484,72 +555,6 @@
       "outputIndex": 1
     },
     {
-      "from": "Separador por categorias.",
-      "to": "iterar_items_gasto",
-      "type": "main",
-      "outputIndex": 0
-    },
-    {
-      "from": "Subir descripcion pdf/img item",
-      "to": "descargar_archivo_item",
-      "type": "main",
-      "outputIndex": 0
-    },
-    {
-      "from": "Subir descripcion pdf/img items",
-      "to": "descargar_archivo_items",
-      "type": "main",
-      "outputIndex": 0
-    },
-    {
-      "from": "Subir descripcion text",
-      "to": "enviar_rendicion",
-      "type": "main",
-      "outputIndex": 0
-    },
-    {
-      "from": "Subir File Item",
-      "to": "se subio?",
-      "type": "main",
-      "outputIndex": 0
-    },
-    {
-      "from": "Subir File Items",
-      "to": "se subio?",
-      "type": "main",
-      "outputIndex": 0
-    },
-    {
-      "from": "Switch",
-      "to": "descargar_imagen",
-      "type": "main",
-      "outputIndex": 1
-    },
-    {
-      "from": "Switch",
-      "to": "descargar_pdf",
-      "type": "main",
-      "outputIndex": 0
-    },
-    {
-      "from": "Switch",
-      "to": "descarte_tipo_desconocido",
-      "type": "main",
-      "outputIndex": 3
-    },
-    {
-      "from": "Switch",
-      "to": "normalizar texto",
-      "type": "main",
-      "outputIndex": 2
-    },
-    {
-      "from": "Telegram Trigger",
-      "to": "Normalizacion",
-      "type": "main",
-      "outputIndex": 0
-    },
-    {
       "from": "tiene_contenido_valido",
       "to": "obtener_rendiciones_pendientes",
       "type": "main",
@@ -563,33 +568,15 @@
     },
     {
       "from": "validacion_datos_pdf_img",
-      "to": "Comprueba que todos los datos",
+      "to": "crear_rendicion",
       "type": "main",
-      "outputIndex": 1
+      "outputIndex": 0
     },
     {
       "from": "validacion_datos_pdf_img",
-      "to": "crear_rendicion",
-      "type": "main",
-      "outputIndex": 0
-    },
-    {
-      "from": "validacion_datos_text",
       "to": "Comprueba que todos los datos",
       "type": "main",
       "outputIndex": 1
-    },
-    {
-      "from": "validacion_datos_text",
-      "to": "crear_rendicion",
-      "type": "main",
-      "outputIndex": 0
-    },
-    {
-      "from": "Validador de datos pdf/fotos",
-      "to": "validacion_datos_pdf_img",
-      "type": "main",
-      "outputIndex": 0
     }
   ]
 }

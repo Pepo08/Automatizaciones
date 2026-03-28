@@ -2,7 +2,7 @@
   "id": "brquKOgljLZruZBl",
   "name": "Rendicion de gastos",
   "active": false,
-  "versionId": "bb002b91-b31e-466e-a82f-aede4d969820",
+  "versionId": "ffdf9695-eb8d-4016-9a4e-89775110fc57",
   "settings": {
     "availableInMCP": false,
     "binaryMode": "separate",
@@ -286,7 +286,7 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        5168,
+        4912,
         -16
       ],
       "typeVersion": 1,
@@ -297,7 +297,7 @@
       "parameters": {
         "content": "# Validaciones finales\n",
         "height": 864,
-        "width": 1632,
+        "width": 1376,
         "color": 5
       },
       "type": "n8n-nodes-base.stickyNote",
@@ -409,13 +409,13 @@
     {
       "parameters": {
         "content": "# Commmit API\n",
-        "height": 752,
+        "height": 704,
         "width": 2016,
         "color": 5
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        3136,
+        2880,
         -16
       ],
       "typeVersion": 1,
@@ -431,7 +431,7 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        4080,
+        3904,
         320
       ],
       "id": "55316daa-740a-44bd-9983-040166d85dc3",
@@ -471,7 +471,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        3568,
+        3312,
         192
       ],
       "id": "55b61057-9e2b-4cc8-b890-8ae2c90e2f71",
@@ -488,8 +488,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        4800,
-        512
+        4528,
+        416
       ],
       "id": "364a064d-478c-4000-8742-0f12d30db10b",
       "name": "error_subida_archivo",
@@ -522,7 +522,7 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        -864,
+        -848,
         112
       ],
       "id": "f77ddb0a-819d-426d-a9df-51c5e01c39e5",
@@ -585,7 +585,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        -1072,
+        -1056,
         128
       ],
       "id": "cdbf67dd-8668-4f89-b4d6-1d0384e34849",
@@ -752,7 +752,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        3376,
+        3120,
         192
       ],
       "id": "42c37d10-56f6-423d-922c-3dfa8efcea60",
@@ -783,7 +783,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        4688,
+        4432,
         176
       ],
       "id": "50c102d5-4cff-48a4-ae02-a7f404eae7a1",
@@ -1156,7 +1156,7 @@
     {
       "parameters": {
         "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
-        "text": "=Tu rendicion ha sido cargada y enviada, te dejo los datos para que los compruebes:\n\nDescripcion: {{\n  $('Separador por categorias.').isExecuted\n    ? $('Separador por categorias.').first().json.descripcion_general\n    : $('validacion_datos_pdf_img').first().json.proveedor.nombre\n}}\nImporte total: ${{\n  $('Validador de datos pdf/fotos').isExecuted\n    ? $('Validador de datos pdf/fotos').first().json.total\n    : $('Separador por categorias.').first().json.importe_total\n}}",
+        "text": "=Listo, tu rendicion ha sido cargada y enviada, te dejo los datos para que los compruebes:\n\nDescripcion: {{\n  $('Separador por categorias.').isExecuted\n    ? $('Separador por categorias.').first().json.descripcion_general\n    : $('validacion_datos_pdf_img').first().json.proveedor.nombre\n}}\nImporte total: ${{\n  $('Validador de datos pdf/fotos').isExecuted\n    ? $('Validador de datos pdf/fotos').first().json.total\n    : $('Separador por categorias.').first().json.importe_total\n}}",
         "additionalFields": {
           "appendAttribution": false
         }
@@ -1164,7 +1164,7 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        5360,
+        5104,
         176
       ],
       "id": "227b2f94-3ef1-4b04-b42e-72eac41d4fbe",
@@ -1274,8 +1274,8 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        5360,
-        320
+        5104,
+        400
       ],
       "id": "ea7ebecb-0ce4-4483-886b-1bf4efb6f1cd",
       "name": "actualizar_conv_post_envio",
@@ -1544,7 +1544,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        4032,
+        3776,
         176
       ],
       "id": "aa65b725-3693-4201-8343-b37dfb551b93",
@@ -1588,40 +1588,6 @@
       ],
       "id": "8a890e4c-24d4-4073-9bd6-23e8cf6a2ac9",
       "name": "es text?"
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict",
-            "version": 3
-          },
-          "conditions": [
-            {
-              "id": "4f98228d-9e79-40dd-81bb-c05a29040b38",
-              "leftValue": "",
-              "rightValue": "",
-              "operator": {
-                "type": "string",
-                "operation": "equals",
-                "name": "filter.operator.equals"
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.3,
-      "position": [
-        2672,
-        160
-      ],
-      "id": "76073fc4-8581-4c65-92f4-d758ad3e2525",
-      "name": "validacion_datos_text"
     },
     {
       "parameters": {
@@ -1684,7 +1650,7 @@
       "type": "n8n-nodes-base.aggregate",
       "typeVersion": 1,
       "position": [
-        3600,
+        3344,
         384
       ],
       "id": "0a27dd09-1d54-4113-9569-19b1bcf40ee8",
@@ -1697,7 +1663,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        3280,
+        3024,
         384
       ],
       "id": "f19712ae-974d-43ff-b99d-9dd4b8c959cf",
@@ -1728,7 +1694,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        3920,
+        3680,
         320
       ],
       "id": "e5e2212d-8e56-4ea5-bdf7-4f11c4d433fb",
@@ -1765,7 +1731,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        4064,
+        3792,
         480
       ],
       "id": "f7f496e9-1914-4f3c-a4ad-45756ac398ea",
@@ -1805,7 +1771,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        3760,
+        3504,
         384
       ],
       "id": "0beebef4-6082-42bf-bb23-7c31bd94b2bf",
@@ -1818,7 +1784,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        3920,
+        3648,
         480
       ],
       "id": "38c66286-5998-4d7a-bde7-d03efa1fe984",
@@ -1851,8 +1817,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        4496,
-        320
+        4288,
+        400
       ],
       "id": "4699240e-b776-4f24-8e7e-8de0a1f56eb3",
       "name": "se subio?"
@@ -1866,7 +1832,7 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        4208,
+        3968,
         480
       ],
       "id": "93ff83ac-2850-40cb-9bd7-fef34ebb548d",
@@ -1907,7 +1873,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        4352,
+        4128,
         480
       ],
       "id": "b253d0ea-cf2c-47de-a5e4-6634bfd2bc0b",
@@ -1947,7 +1913,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        4272,
+        4128,
         320
       ],
       "id": "6797839a-863a-4fea-a748-8ead32a83e03",
@@ -1966,7 +1932,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        3440,
+        3184,
         384
       ],
       "id": "00a603cf-16bd-4346-a025-02d3b12036af",
@@ -1979,11 +1945,12 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        4864,
+        4672,
         176
       ],
       "id": "ecf99c53-d49a-4d31-ad4c-53c800b4999d",
-      "name": "confirmacion de envio"
+      "name": "confirmacion de envio",
+      "disabled": true
     },
     {
       "parameters": {
@@ -2112,8 +2079,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        2928,
-        416
+        2496,
+        432
       ],
       "id": "902f4fc8-88f7-45fd-acba-e14195aa802e",
       "name": "Comprueba que todos los datos",
@@ -2205,125 +2172,12 @@
     }
   ],
   "connections": {
-    "agente_chat": {
-      "main": [
-        [
-          {
-            "index": 0,
-            "node": "respuesta_chat",
-            "type": "main"
-          }
-        ]
-      ]
-    },
-    "agente_parser_rendicion": {
-      "main": [
-        [
-          {
-            "index": 0,
-            "node": "Normalize Extracted Text Data",
-            "type": "main"
-          }
-        ]
-      ]
-    },
-    "agregar_rendiciones": {
-      "main": [
-        [
-          {
-            "index": 0,
-            "node": "resumen_rendiciones",
-            "type": "main"
-          }
-        ]
-      ]
-    },
-    "agregar_items_con_iva": {
-      "main": [
-        [
-          {
-            "index": 0,
-            "node": "item o items?",
-            "type": "main"
-          }
-        ]
-      ]
-    },
     "Analyze image": {
       "main": [
         [
           {
             "index": 0,
             "node": "Normalize Extracted Image Data",
-            "type": "main"
-          }
-        ]
-      ]
-    },
-    "parsear_mensajes_telegram": {
-      "main": [
-        [
-          {
-            "index": 0,
-            "node": "tiene_contenido_valido",
-            "type": "main"
-          }
-        ]
-      ]
-    },
-    "crear_rendicion": {
-      "main": [
-        [
-          {
-            "index": 0,
-            "node": "hay un file?",
-            "type": "main"
-          }
-        ]
-      ]
-    },
-    "enviar_rendicion": {
-      "main": [
-        [
-          {
-            "index": 0,
-            "node": "confirmacion de envio",
-            "type": "main"
-          }
-        ]
-      ]
-    },
-    "validacion_datos_text": {
-      "main": [
-        [
-          {
-            "index": 0,
-            "node": "crear_rendicion",
-            "type": "main"
-          }
-        ],
-        [
-          {
-            "index": 0,
-            "node": "Comprueba que todos los datos",
-            "type": "main"
-          }
-        ]
-      ]
-    },
-    "validacion_datos_pdf_img": {
-      "main": [
-        [
-          {
-            "index": 0,
-            "node": "crear_rendicion",
-            "type": "main"
-          }
-        ],
-        [
-          {
-            "index": 0,
-            "node": "Comprueba que todos los datos",
             "type": "main"
           }
         ]
@@ -2340,201 +2194,12 @@
         ]
       ]
     },
-    "descargar_imagen": {
-      "main": [
-        [
-          {
-            "index": 0,
-            "node": "Analyze image",
-            "type": "main"
-          }
-        ]
-      ]
-    },
-    "descargar_archivo_item": {
-      "main": [
-        [
-          {
-            "index": 0,
-            "node": "Subir File Item",
-            "type": "main"
-          }
-        ]
-      ]
-    },
-    "descargar_pdf": {
-      "main": [
-        [
-          {
-            "index": 0,
-            "node": "Extract from File",
-            "type": "main"
-          }
-        ]
-      ]
-    },
-    "descargar_archivo_items": {
-      "main": [
-        [
-          {
-            "index": 0,
-            "node": "Subir File Items",
-            "type": "main"
-          }
-        ]
-      ]
-    },
-    "obtener_conversacion": {
-      "main": [
-        [
-          {
-            "index": 0,
-            "node": "new conversation?",
-            "type": "main"
-          }
-        ]
-      ]
-    },
-    "obtener_rendiciones_pendientes": {
-      "main": [
-        [
-          {
-            "index": 0,
-            "node": "iterar_rendiciones",
-            "type": "main"
-          }
-        ]
-      ]
-    },
-    "obtener_datos_idemp_text": {
-      "main": [
-        [
-          {
-            "index": 0,
-            "node": "idempotencia text code",
-            "type": "main"
-          }
-        ]
-      ]
-    },
-    "obtener_datos_idemp_pdf": {
-      "main": [
-        [
-          {
-            "index": 0,
-            "node": "idempotencia pdf code",
-            "type": "main"
-          }
-        ]
-      ]
-    },
-    "obtener_datos_idemp_img": {
-      "main": [
-        [
-          {
-            "index": 0,
-            "node": "idempotencia img code",
-            "type": "main"
-          }
-        ]
-      ]
-    },
-    "tiene_contenido_valido": {
-      "main": [
-        [
-          {
-            "index": 0,
-            "node": "obtener_rendiciones_pendientes",
-            "type": "main"
-          }
-        ],
-        [
-          {
-            "index": 0,
-            "node": "respuesta_rechazo",
-            "type": "main"
-          }
-        ]
-      ]
-    },
-    "es_del_usuario": {
-      "main": [
-        [
-          {
-            "index": 0,
-            "node": "Switch",
-            "type": "main"
-          }
-        ],
-        [
-          {
-            "index": 0,
-            "node": "iterar_rendiciones",
-            "type": "main"
-          }
-        ]
-      ]
-    },
-    "decision_OK": {
-      "main": [
-        [
-          {
-            "index": 0,
-            "node": "Separador por categorias.",
-            "type": "main"
-          }
-        ],
-        [
-          {
-            "index": 0,
-            "node": "respuesta_aclaracion",
-            "type": "main"
-          }
-        ]
-      ]
-    },
     "Iva agregado": {
       "main": [
         [
           {
             "index": 0,
             "node": "agregar_items_con_iva",
-            "type": "main"
-          }
-        ]
-      ]
-    },
-    "iterar_rendiciones": {
-      "main": [
-        [
-          {
-            "index": 0,
-            "node": "agregar_rendiciones",
-            "type": "main"
-          }
-        ],
-        [
-          {
-            "index": 0,
-            "node": "es_del_usuario",
-            "type": "main"
-          }
-        ]
-      ]
-    },
-    "iterar_items_gasto": {
-      "main": [
-        [
-          {
-            "index": 0,
-            "node": "es text?",
-            "type": "main"
-          }
-        ],
-        [
-          {
-            "index": 0,
-            "node": "obtener_datos_idemp_text",
             "type": "main"
           }
         ]
@@ -2613,82 +2278,12 @@
         ]
       ]
     },
-    "modelo_parser_rendicion": {
-      "ai_languageModel": [
-        [
-          {
-            "index": 0,
-            "node": "agente_parser_rendicion",
-            "type": "ai_languageModel"
-          }
-        ]
-      ]
-    },
-    "modelo_chat_conversacional": {
-      "ai_languageModel": [
-        [
-          {
-            "index": 0,
-            "node": "agente_chat",
-            "type": "ai_languageModel"
-          }
-        ]
-      ]
-    },
     "Reconstruccion Normalize Items": {
       "main": [
         [
           {
             "index": 0,
             "node": "Subir descripcion pdf/img items",
-            "type": "main"
-          }
-        ]
-      ]
-    },
-    "respuesta_rechazo": {
-      "main": [
-        []
-      ]
-    },
-    "respuesta_chat": {
-      "main": [
-        [
-          {
-            "index": 0,
-            "node": "actualizar_conv_post_chat",
-            "type": "main"
-          }
-        ]
-      ]
-    },
-    "respuesta_aclaracion": {
-      "main": [
-        [
-          {
-            "index": 0,
-            "node": "actualizar_conv_post_aclaracion",
-            "type": "main"
-          }
-        ]
-      ]
-    },
-    "error_subida_archivo": {
-      "main": [
-        []
-      ]
-    },
-    "resumen_rendiciones": {
-      "main": [
-        []
-      ]
-    },
-    "confirmacion_carga_usuario": {
-      "main": [
-        [
-          {
-            "index": 0,
-            "node": "actualizar_conv_post_envio",
             "type": "main"
           }
         ]
@@ -2814,6 +2409,50 @@
         ]
       ]
     },
+    "agente_chat": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "respuesta_chat",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "agente_parser_rendicion": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Normalize Extracted Text Data",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "agregar_items_con_iva": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "item o items?",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "agregar_rendiciones": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "resumen_rendiciones",
+            "type": "main"
+          }
+        ]
+      ]
+    },
     "chat o rendicion?": {
       "main": [
         [
@@ -2854,12 +2493,112 @@
         ]
       ]
     },
+    "confirmacion_carga_usuario": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "actualizar_conv_post_envio",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "crear_rendicion": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "hay un file?",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "decision_OK": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Separador por categorias.",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "respuesta_aclaracion",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "descargar_archivo_item": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Subir File Item",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "descargar_archivo_items": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Subir File Items",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "descargar_imagen": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Analyze image",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "descargar_pdf": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Extract from File",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "enviar_rendicion": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "confirmacion de envio",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "error_subida_archivo": {
+      "main": [
+        []
+      ]
+    },
     "es text?": {
       "main": [
         [
           {
             "index": 0,
-            "node": "validacion_datos_text",
+            "node": "crear_rendicion",
             "type": "main"
           }
         ],
@@ -2867,6 +2606,24 @@
           {
             "index": 0,
             "node": "Validador de datos pdf/fotos",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "es_del_usuario": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Switch",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "iterar_rendiciones",
             "type": "main"
           }
         ]
@@ -2977,6 +2734,64 @@
         ]
       ]
     },
+    "iterar_items_gasto": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "es text?",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "obtener_datos_idemp_text",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "iterar_rendiciones": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "agregar_rendiciones",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "es_del_usuario",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "modelo_chat_conversacional": {
+      "ai_languageModel": [
+        [
+          {
+            "index": 0,
+            "node": "agente_chat",
+            "type": "ai_languageModel"
+          }
+        ]
+      ]
+    },
+    "modelo_parser_rendicion": {
+      "ai_languageModel": [
+        [
+          {
+            "index": 0,
+            "node": "agente_parser_rendicion",
+            "type": "ai_languageModel"
+          }
+        ]
+      ]
+    },
     "new conversation?": {
       "main": [
         [
@@ -2999,6 +2814,104 @@
         ]
       ]
     },
+    "obtener_conversacion": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "new conversation?",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "obtener_datos_idemp_img": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "idempotencia img code",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "obtener_datos_idemp_pdf": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "idempotencia pdf code",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "obtener_datos_idemp_text": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "idempotencia text code",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "obtener_rendiciones_pendientes": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "iterar_rendiciones",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "parsear_mensajes_telegram": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "tiene_contenido_valido",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "respuesta_aclaracion": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "actualizar_conv_post_aclaracion",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "respuesta_chat": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "actualizar_conv_post_chat",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "respuesta_rechazo": {
+      "main": [
+        []
+      ]
+    },
+    "resumen_rendiciones": {
+      "main": [
+        []
+      ]
+    },
     "se subio?": {
       "main": [
         [
@@ -3012,6 +2925,42 @@
           {
             "index": 0,
             "node": "error_subida_archivo",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "tiene_contenido_valido": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "obtener_rendiciones_pendientes",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "respuesta_rechazo",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "validacion_datos_pdf_img": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "crear_rendicion",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Comprueba que todos los datos",
             "type": "main"
           }
         ]

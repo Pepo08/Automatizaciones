@@ -1,139 +1,81 @@
-# Mailchimp — Mantenimiento de Audiencia
+# Mailchimp — Sync Contactos desde Sheets
 
-Workflow de n8n para sincronización y mantenimiento automatizado de audiencias de Mailchimp.
-Pensado como base real para campañas de marketing segmentadas.
+Workflow de n8n para sincronización unidireccional: **Google Sheets → Mailchimp**.
 
 ## Qué hace
 
-1. Carga contactos desde una fuente estructurada (demo JSON, reemplazable por Google Sheets, CSV, API)
-2. Normaliza campos: emails a lowercase, birthday a `MM/DD`, trim de espacios, tags a lowercase
-3. Valida emails y deduplica por email
-4. Consulta la audiencia actual de Mailchimp via API (con paginación)
-5. Compara fuente vs Mailchimp y clasifica en 5 grupos:
-   - `toCreate` — contactos nuevos a dar de alta
-   - `toUpdate` — contactos existentes con campos diferentes
-   - `toUnsubscribe` — contactos en Mailchimp que ya no están en la fuente
-   - `unchanged` — contactos que no requieren cambios
-   - `invalid` — emails inválidos o duplicados
-6. Según el modo:
-   - **DRY_RUN=true**: genera reporte de preview sin tocar Mailchimp
-   - **DRY_RUN=false**: envía cada grupo a su nodo HTTP Request correspondiente
+1. Lee contactos desde Google Sheets
+2. Normaliza campos (email, teléfono, estado, tipo)
+3. Upsert en Mailchimp (crea o actualiza automáticamente)
+4. Asigna tag según tipo de contacto
 
-## Arquitectura
+## Flujo
 
 ```
-Trigger → Config → Load Source → Normalize → Validate & Dedup → Fetch MC → Compare → DRY_RUN?
-                                                                                        │
-                                                                          ┌──────────────┴──────────────┐
-                                                                     DRY_RUN=true              DRY_RUN=false
-                                                                          │                          │
-                                                                   Preview Report          Prepare Items → Switch
-                                                                                              │    │    │    │
-                                                                                         Create Update Unsub Report
-                                                                                          [MC]   [MC]  [MC]    │
-                                                                                                          Execution
-                                                                                                           Report
+Trigger Manual → Config → Leer Contactos (Sheets) → Normalizar Contactos → Upsert Contacto (MC) → Asignar Tag (MC)
 ```
 
-### 15 nodos
+6 nodos operativos + 3 notas. Lineal, sin ramas.
+
+## Nodos
 
 | # | Nodo | Tipo | Función |
-|---|---|---|---|
-| 1 | Manual Trigger | Trigger | Inicia el flujo |
-| 2 | Config | Set | DRY_RUN, list ID, default status |
-| 3 | Load Source Contacts | Code | Demo data (reemplazable) |
-| 4 | Normalize Contacts | Code | Normaliza email, nombres, birthday, tags |
-| 5 | Validate & Deduplicate | Code | Valida emails, deduplica, separa inválidos |
-| 6 | **Mailchimp: Get Audience** | **Mailchimp** | **getAll** — descarga todos los miembros |
-| 7 | Compare & Classify | Code | Compara y clasifica en 5 grupos |
-| 8 | Check DRY_RUN | IF | Rutea por modo |
-| 9 | Build Preview Report | Code | Reporte dry run |
-| 10 | Prepare Items for Mailchimp | Code | Prepara items individuales para los nodos nativos |
-| 11 | Route by Action | Switch | Rutea por _action: create/update/unsubscribe/report |
-| 12 | **Mailchimp: Create Member** | **Mailchimp** | **create** — alta + merge fields + tags |
-| 13 | **Mailchimp: Update Member** | **Mailchimp** | **update** — actualiza merge fields |
-| 14 | **Mailchimp: Unsubscribe** | **Mailchimp** | **update** — cambia status a unsubscribed |
-| 15 | Build Execution Report | Code | Reporte final |
+|---|------|------|---------|
+| 1 | Trigger Manual | Trigger | Inicia el flujo |
+| 2 | Config | Set | `MAILCHIMP_LIST_ID` |
+| 3 | Leer Contactos | Google Sheets | Lee todas las filas |
+| 4 | Normalizar Contactos | Code | Mapea columnas, normaliza, filtra inválidos |
+| 5 | Upsert Contacto | **Mailchimp** | Crea o actualiza miembro + merge fields + status |
+| 6 | Asignar Tag | **Mailchimp** | Asigna tipo como tag |
 
-## Modelo de datos
+## Campos del Sheets
 
-Campos soportados por contacto:
+| Columna | Uso |
+|---------|-----|
+| Email | Email del contacto (obligatorio) |
+| Nombre (FNAME) | Nombre → merge field FNAME |
+| Apellido (LNAME) | Apellido → merge field LNAME |
+| Teléfono (PHONE) | Teléfono → merge field PHONE |
+| Estado (Activo/Inactivo) | Activo → subscribed, Inactivo → unsubscribed |
+| Tipo (Tag) | Se asigna como tag en MC (ej: cliente, empleado) |
 
-| Campo | Merge Field | Uso en segmentación |
-|---|---|---|
-| email | email_address | Clave principal |
-| first_name | FNAME | Personalización |
-| last_name | LNAME | Personalización |
-| phone | PHONE | Contacto directo |
-| birthday | BIRTHDAY (MM/DD) | Campaña de cumpleaños |
-| zone | ZONE | Segmentación por región |
-| city | CITY | Segmentación por ciudad |
-| country | COUNTRY | Segmentación por país |
-| customer_type | CTYPE | cliente / prospecto / representante |
-| role | ROLE | comprador / representante |
-| representative | REP | Campañas por representante |
-| tags | tags | Segmentación flexible |
-| source_system | - | Trazabilidad (no se envía a MC) |
-| updated_at | - | Trazabilidad (no se envía a MC) |
+El normalizer acepta variantes de nombre de columna (con/sin tildes, paréntesis, mayúsculas).
 
-## Inicio rápido
+## Setup
 
 ### 1. Importar
-Workflows > Import from File > `workflows/clean/mailchimp-list-maintenance.json`
 
-### 2. Crear merge fields en Mailchimp
-Audience > Settings > Audience fields > crear: PHONE, BIRTHDAY, ZONE, CITY, COUNTRY, CTYPE, ROLE, REP
-(ver detalle en [setup.md](docs/setup.md))
+Workflows > Import from File > `workflows/clean/mailchimp-contacts-sync.json`
 
-### 3. Configurar credencial Mailchimp en n8n
-Settings > Credentials > Add > Mailchimp API > ingresar tu API key.
-Después vincular la credencial a los 4 nodos Mailchimp del workflow.
+### 2. Credenciales
 
-### 4. Completar Config
+- **Google Sheets**: Settings > Credentials > Google Sheets OAuth2 → vincular al nodo `Leer Contactos`
+- **Mailchimp**: Settings > Credentials > Mailchimp API → vincular a `Upsert Contacto` y `Asignar Tag`
 
-| Variable | Qué poner |
-|---|---|
-| `MAILCHIMP_LIST_ID` | ID de tu audiencia |
-| `DEFAULT_STATUS` | `subscribed` (default) |
-| `DRY_RUN` | `true` para probar, `false` para ejecutar |
+### 3. Configurar
 
-> La API key se gestiona como credencial nativa de n8n, no en Config.
+- Nodo `Config`: poner tu `MAILCHIMP_LIST_ID` (Audience > Settings > Audience ID)
+- Nodo `Leer Contactos`: seleccionar spreadsheet y hoja
 
-### 5. Probar en dry run
-`DRY_RUN = true` → ejecutar → revisar Build Preview Report
+### 4. Ejecutar
 
-### 6. Ejecutar real
-`DRY_RUN = false` → ejecutar → revisar cada nodo Mailchimp + Build Execution Report
+Click en "Execute Workflow". Revisar output de cada nodo.
 
-## Estructura del proyecto
+## Lógica
+
+- **Upsert nativo**: Mailchimp crea el contacto si no existe, actualiza si ya existe. Una sola llamada.
+- **Status**: se setea en cada ejecución según el valor del Sheets (Activo/Inactivo).
+- **Tags**: se asignan en cada ejecución. El tipo del Sheets se usa como tag.
+- **Errores**: `continueRegularOutput` + retry x3. Un contacto con error no rompe el flujo.
+- **Duplicados**: Mailchimp los maneja nativamente via upsert. No hay deduplicación manual.
+
+## Estructura
 
 ```
 mailchimp/
   workflows/clean/
-    mailchimp-list-maintenance.json     ← workflow n8n (15 nodos)
-  docs/
-    flow-overview.md                    ← arquitectura técnica detallada
-    setup.md                            ← guía de configuración
-    testing.md                          ← plan de prueba (5 tests + checklist)
-  samples/
-    source-contacts.sample.json         ← ejemplo de entrada (8 contactos)
-    expected-output.sample.json         ← ejemplo de salida (dry run)
-  mappings/
-    field-mappings.json                 ← mapeo completo fuente → Mailchimp + casos de segmentación
+    mailchimp-contacts-sync.json   ← workflow (6 nodos + 3 notas)
+  scripts/
+    push-to-n8n.js                 ← deploy via API
+  README.md
 ```
-
-## Campañas soportadas por este modelo
-
-- **Cumpleaños**: segmentar por `BIRTHDAY` = mes actual
-- **Por zona**: segmentar por `ZONE` (Litoral, Pampeana, Cuyo, NOA, Patagonia)
-- **Por tipo de cliente**: segmentar por `CTYPE` (cliente, prospecto, representante)
-- **Por representante**: segmentar por `REP` (campañas dirigidas a clientes de un representante)
-- **Por tags**: filtrar por tags específicos (premium, activo, etc)
-- **Por ciudad**: segmentar por `CITY` para campañas locales
-
-## Docs adicionales
-
-- [Arquitectura del flujo](docs/flow-overview.md)
-- [Setup y configuración](docs/setup.md)
-- [Plan de prueba](docs/testing.md)
-- [Mapeo de campos](mappings/field-mappings.json)

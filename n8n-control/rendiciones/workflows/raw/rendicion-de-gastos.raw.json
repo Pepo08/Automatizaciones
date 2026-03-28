@@ -1,5 +1,5 @@
 {
-  "updatedAt": "2026-03-24T17:57:17.983Z",
+  "updatedAt": "2026-03-26T01:01:50.733Z",
   "createdAt": "2026-02-21T16:34:55.002Z",
   "id": "brquKOgljLZruZBl",
   "name": "Rendicion de gastos",
@@ -21,7 +21,7 @@
                 },
                 "conditions": [
                   {
-                    "leftValue": "={{ ['document','pdf'].includes($('If').item.json.normalized_kind) }}",
+                    "leftValue": "={{ ['document','pdf'].includes($('tiene_contenido_valido').item.json.normalized_kind) }}",
                     "rightValue": "=",
                     "operator": {
                       "type": "boolean",
@@ -47,7 +47,7 @@
                 "conditions": [
                   {
                     "id": "b2a4910d-bc2b-46cc-a605-6695bf5ac98b",
-                    "leftValue": "={{ $('If').item.json.normalized_kind }}",
+                    "leftValue": "={{ $('tiene_contenido_valido').item.json.normalized_kind }}",
                     "rightValue": "image",
                     "operator": {
                       "type": "string",
@@ -212,7 +212,7 @@
         384
       ],
       "id": "2cf8d1a1-2f68-4783-a90e-730d608be42a",
-      "name": "No Operation, do nothing"
+      "name": "descarte_sin_mensajes"
     },
     {
       "parameters": {
@@ -271,7 +271,7 @@
         128
       ],
       "id": "1d582f37-ceca-4242-9ffd-8445f7e6805e",
-      "name": "Code in JavaScript"
+      "name": "parsear_mensajes_telegram"
     },
     {
       "parameters": {
@@ -282,7 +282,7 @@
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        5168,
+        4912,
         -16
       ],
       "typeVersion": 1,
@@ -293,7 +293,7 @@
       "parameters": {
         "content": "# Validaciones finales\n",
         "height": 864,
-        "width": 1632,
+        "width": 1376,
         "color": 5
       },
       "type": "n8n-nodes-base.stickyNote",
@@ -371,7 +371,7 @@
         368
       ],
       "id": "5d7f3d22-76a1-48a5-8799-8883e53351ef",
-      "name": "Send a text message",
+      "name": "respuesta_rechazo",
       "webhookId": "cedad258-eaa6-48ac-b730-84997056d6f7",
       "credentials": {
         "telegramApi": {
@@ -383,7 +383,7 @@
     {
       "parameters": {
         "resource": "file",
-        "fileId": "={{ $('Code in JavaScript').item.json.telegram_file_id }}",
+        "fileId": "={{ $('parsear_mensajes_telegram').item.json.telegram_file_id }}",
         "additionalFields": {}
       },
       "type": "n8n-nodes-base.telegram",
@@ -393,7 +393,7 @@
         224
       ],
       "id": "7ce41c8a-8b4b-43dd-9c9b-7dd710c17d9d",
-      "name": "Get a file",
+      "name": "descargar_imagen",
       "webhookId": "e54ccc01-ec57-44e3-b4cf-f946acfc516f",
       "credentials": {
         "telegramApi": {
@@ -405,13 +405,13 @@
     {
       "parameters": {
         "content": "# Commmit API\n",
-        "height": 752,
+        "height": 704,
         "width": 2016,
         "color": 5
       },
       "type": "n8n-nodes-base.stickyNote",
       "position": [
-        3136,
+        2880,
         -16
       ],
       "typeVersion": 1,
@@ -421,17 +421,17 @@
     {
       "parameters": {
         "resource": "file",
-        "fileId": "={{ $('Code in JavaScript').item.json.telegram_file_id }}",
+        "fileId": "={{ $('parsear_mensajes_telegram').item.json.telegram_file_id }}",
         "additionalFields": {}
       },
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        4080,
+        3904,
         320
       ],
       "id": "55316daa-740a-44bd-9983-040166d85dc3",
-      "name": "Get a file2",
+      "name": "descargar_archivo_item",
       "webhookId": "e54ccc01-ec57-44e3-b4cf-f946acfc516f",
       "credentials": {
         "telegramApi": {
@@ -467,7 +467,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        3568,
+        3312,
         192
       ],
       "id": "55b61057-9e2b-4cc8-b890-8ae2c90e2f71",
@@ -484,11 +484,11 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        4800,
-        512
+        4528,
+        416
       ],
       "id": "364a064d-478c-4000-8742-0f12d30db10b",
-      "name": "Send a text message5",
+      "name": "error_subida_archivo",
       "webhookId": "971b15f0-59fd-4aa2-a4ce-8726da7eeb91",
       "credentials": {
         "telegramApi": {
@@ -518,11 +518,11 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        -864,
+        -848,
         112
       ],
       "id": "f77ddb0a-819d-426d-a9df-51c5e01c39e5",
-      "name": "Get row(s) in sheet1",
+      "name": "obtener_rendiciones_pendientes",
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "X9RzWqukg9OFpJYv",
@@ -532,7 +532,7 @@
     },
     {
       "parameters": {
-        "chatId": "={{ $('If').item.json.chat_id }}",
+        "chatId": "={{ $('tiene_contenido_valido').item.json.chat_id }}",
         "text": "este no va",
         "additionalFields": {
           "appendAttribution": false
@@ -545,7 +545,7 @@
         160
       ],
       "id": "06519aa9-0fd4-4b14-b5ff-1732584ebb9e",
-      "name": "Send a text message6",
+      "name": "resumen_rendiciones",
       "webhookId": "cedad258-eaa6-48ac-b730-84997056d6f7",
       "credentials": {
         "telegramApi": {
@@ -581,11 +581,11 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        -1072,
+        -1056,
         128
       ],
       "id": "cdbf67dd-8668-4f89-b4d6-1d0384e34849",
-      "name": "If"
+      "name": "tiene_contenido_valido"
     },
     {
       "parameters": {
@@ -599,7 +599,7 @@
           "conditions": [
             {
               "id": "b7a498f0-aef3-4107-be08-92b8a0bae2cc",
-              "leftValue": "={{ $('If').item.json.user_id }}",
+              "leftValue": "={{ $('tiene_contenido_valido').item.json.user_id }}",
               "rightValue": "={{ $json.telegram_user_id }}",
               "operator": {
                 "type": "string",
@@ -618,12 +618,12 @@
         400
       ],
       "id": "bd0b72ef-80c5-4023-b840-f14a916d45aa",
-      "name": "If2"
+      "name": "es_del_usuario"
     },
     {
       "parameters": {
         "resource": "file",
-        "fileId": "={{ $('Code in JavaScript').item.json.telegram_file_id }}",
+        "fileId": "={{ $('parsear_mensajes_telegram').item.json.telegram_file_id }}",
         "additionalFields": {}
       },
       "type": "n8n-nodes-base.telegram",
@@ -633,7 +633,7 @@
         64
       ],
       "id": "2800e514-8118-4691-80ff-ef3fd3eb8adf",
-      "name": "Get a file3",
+      "name": "descargar_pdf",
       "webhookId": "e54ccc01-ec57-44e3-b4cf-f946acfc516f",
       "credentials": {
         "telegramApi": {
@@ -699,7 +699,7 @@
         112
       ],
       "id": "112d3219-f8e9-4fe9-82ca-bc9f13492c8e",
-      "name": "Loop Over Items"
+      "name": "iterar_rendiciones"
     },
     {
       "parameters": {
@@ -717,7 +717,7 @@
         32
       ],
       "id": "ae57ca10-c4be-44a8-8dab-2d39755c3ffd",
-      "name": "Aggregate"
+      "name": "agregar_rendiciones"
     },
     {
       "parameters": {
@@ -748,11 +748,11 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        3376,
+        3120,
         192
       ],
       "id": "42c37d10-56f6-423d-922c-3dfa8efcea60",
-      "name": "Crear rendision",
+      "name": "crear_rendicion",
       "credentials": {
         "httpHeaderAuth": {
           "id": "VY36SSbeDS11wJf9",
@@ -763,7 +763,7 @@
     {
       "parameters": {
         "method": "PUT",
-        "url": "=https://restprueba.madelan.com.ar/edp/v1.3/rendicion/{{ $('Crear rendision').item.json.idrendicion }}/enviar",
+        "url": "=https://restprueba.madelan.com.ar/edp/v1.3/rendicion/{{ $('crear_rendicion').item.json.idrendicion }}/enviar",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "options": {
@@ -779,11 +779,11 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        4688,
+        4432,
         176
       ],
       "id": "50c102d5-4cff-48a4-ae02-a7f404eae7a1",
-      "name": "Enviar Rendision",
+      "name": "enviar_rendicion",
       "credentials": {
         "httpHeaderAuth": {
           "id": "VY36SSbeDS11wJf9",
@@ -814,12 +814,12 @@
         512
       ],
       "id": "4468b647-8de2-452c-ae4a-1d293406ef31",
-      "name": "No Operation, do nothing1"
+      "name": "descarte_tipo_desconocido"
     },
     {
       "parameters": {
         "promptType": "define",
-        "text": "=Sos una persona del área de administración que ayuda a empleados a cargar rendiciones de gastos por chat.\n\nTu trabajo es conversar como una persona real, de forma natural, breve y útil, para ayudar al empleado a cargar el gasto sin vueltas.\n\nTu objetivo principal es que la conversación avance bien y que el usuario pueda resolver lo que quiere hacer, especialmente cargar una rendición o entender cómo cargarla.\n\nNunca respondas como sistema, bot, formulario, instructivo automático ni soporte técnico frío.\n\n==================================================\nREGLA CRÍTICA: EJECUCIÓN VS CONVERSACIÓN\n==================================================\n\nEste flujo es SOLO conversacional.\n\nAunque el usuario mande todos los datos correctos:\n- vos NO estás cargando la rendición\n- vos NO ejecutás ninguna acción real\n\nLa carga real ocurre en OTRO flujo (rendicion_manual).\n\nPor lo tanto:\n\n❌ Nunca digas:\n- \"lo cargo\"\n- \"lo cargué\"\n- \"ya quedó\"\n- \"listo\"\n- \"ya está cargado\"\n- \"lo subí\"\n\n❌ Nunca simules que una acción ocurrió\n\n---\n\n✔ En su lugar, podés:\n\n- confirmar que el formato está bien\n- decir que con eso se puede cargar\n- indicar que ya está listo para ser procesado\n\nEjemplos correctos:\n\n- \"Perfecto, así está bien armado.\"\n- \"Con eso alcanza.\"\n- \"Está bien separado así.\"\n- \"Así como lo mandaste sirve.\"\n- \"Está listo para cargarse.\"\n\n---\n\nREGLA DE ORO:\n\nVos ayudás a preparar la rendición,  \npero nunca sos quien la carga.\n\n==================================================\nDATOS DE CONTEXTO\n==================================================\n\nMensaje actual del usuario:\n{{ $('chat o rendicion?').item.json.raw_text }}\n\n¿Es una conversación nueva?\n{{ $json.is_new_conversation }}\n\nÚltimo mensaje registrado del usuario:\n{{ $('Get row(s) in sheet').item.json.last_message }}\n\nÚltimo mensaje registrado tuyo:\n{{ $('Get row(s) in sheet').item.json.bot_last_message }}\n\n==================================================\nREGLA CENTRAL DE COMPORTAMIENTO\n==================================================\n\nPrimero entendé qué está preguntando o diciendo el usuario en ESTE mensaje.\n\nDespués respondé de forma directa y humana.\n\nNo des una explicación general si el usuario hizo una pregunta puntual.\n\nNo reinicies la conversación si ya estaba empezada.\n\nNo hagas preguntas innecesarias.\n\nNo repitas instrucciones ya implícitas en el contexto.\n\nSi el contexto previo sirve para entender de qué habla, usalo.\n\nSi el contexto previo no sirve o no aplica, priorizá el mensaje actual.\n\n==================================================\nREGLA CRÍTICA: NO INTERPRETAR PARA CARGAR\n==================================================\n\nSi el usuario manda un gasto de forma ambigua, apurada, mezclada o poco separada, no lo des por válido aunque parezca que más o menos se entiende.\n\nTu criterio no es \"creo que entendí\".\nTu criterio es: \"esto quedó suficientemente claro como para que se pueda cargar sin inventar nada\".\n\nSi NO está completamente claro:\n- no lo conviertas vos en una versión final\n- no repitas tu interpretación como si ya sirviera\n- no avances como si ya estuviera resuelto\n\nEn ese caso, hacé solo una de estas dos cosas:\n\n1. pedir que lo reenvíe más claro\n2. mostrarle un ejemplo de cómo debería mandarlo\n\nIMPORTANTE:\nsi mostrás una reformulación, tiene que quedar clarísimo que es un ejemplo de cómo reenviarlo, no una interpretación cerrada ni una carga real.\n\nEjemplo correcto:\n\"Mandámelo así, separado para evitar errores: taxi 19000; comida 20000\"\n\nEjemplo incorrecto:\n\"Perfecto, así está bien: taxi 19000 y comida 20000\"\n\nPorque en el incorrecto estás validando una interpretación tuya.\n\n==================================================\nCÓMO USAR EL CONTEXTO DE CONVERSACIÓN\n==================================================\n\nTené en cuenta estas variables:\n\nis_new_conversation = {{ $json.is_new_conversation }}\n\nlast_message = {{ $('Get row(s) in sheet').item.json.last_message }}\n\nbot_last_message = {{ $('Get row(s) in sheet').item.json.bot_last_message }}\n\nReglas:\n\n1. Si is_new_conversation = true:\n- podés arrancar la charla normal\n- si el usuario solo saluda, respondé como apertura breve\n- si el usuario ya pregunta algo puntual, respondé directamente eso y no metas una bienvenida innecesaria\n\n2. Si is_new_conversation = false:\n- la conversación ya venía de antes\n- no saludes\n- no arranques de cero\n- no vuelvas a explicar todo\n- usá last_message y bot_last_message para entender el contexto previo\n- respondé como alguien que ya viene hablando con el usuario\n\n3. Si el mensaje actual depende del anterior, usá el anterior para completar el sentido\n\nEjemplo:\nlast_message = \"quiero cargar unos taxis\"\nmensaje actual = \"los de ayer\"\n\nInterpretación correcta:\nestá hablando de taxis, no de otra cosa.\n\n4. Si el usuario ya venía hablando de un gasto concreto, no vuelvas a preguntar algo genérico como:\n- \"¿qué gasto querés cargar?\"\n- \"¿qué fue?\"\nsi eso ya se entiende por contexto.\n\n5. Si el mensaje actual cambia el tema, seguí el mensaje actual.\n\n6. También tené en cuenta tu último mensaje (bot_last_message)\n\n- No te contradigas\n- No repitas lo mismo\n- Si el usuario responde a algo que vos pediste, avanzá\n\nEjemplo:\nbot_last_message = \"Pasame cuánto salió\"\nmensaje actual = \"25 mil\"\n\nRespuesta correcta:\n\"Dale, lo cargo así.\"\n\nNO repitas:\n\"Pasame cuánto salió\"\n\n7. Evitá loops (REGLA FUERTE)\n\n- Nunca repitas el mismo mensaje o una variante casi igual al anterior.\n- Si ya pediste algo y el usuario no respondió exactamente eso, cambiá la forma de preguntar.\n- No copies la misma estructura, ni el mismo ejemplo, ni la misma frase.\n\nEn lugar de repetir, hacé una de estas cosas:\n- simplificar la pregunta\n- cambiar el wording\n- avanzar con lo que sí dijo el usuario\n- destrabar la conversación\n\nEjemplo:\n\nMal (loop):\n\"Dale, pasame el gasto...\"\n\"Dale, pasame el gasto...\"\n\nBien:\n\"Decime qué gastaste y listo.\"\no\n\"¿Qué fue y cuánto salió?\"\n\n==================================================\nFORMA DE HABLAR\n==================================================\n\nRespondé siempre:\n- natural\n- breve\n- clara\n- directa\n- como una persona real en un chat laboral normal\n\nTu tono tiene que sonar humano, cercano y útil.\n\nEjemplos de tono correcto:\n- \"Sí, pasámelo así nomás.\"\n- \"Dale, con eso alcanza.\"\n- \"No pasa nada, mandámelo manual.\"\n- \"Sí, se puede cargar igual.\"\n- \"Si después conseguís el comprobante, me lo pasás.\"\n- \"Con decirme qué fue y cuánto salió ya está.\"\n- \"Dale, decime el gasto y el importe.\"\n\nNunca hables como:\n- bot\n- sistema\n- soporte técnico\n- instructivo largo\n- formulario\n\nNunca uses frases como:\n- \"su solicitud fue procesada\"\n- \"el sistema detectó\"\n- \"campos obligatorios\"\n- \"formato inválido\"\n- \"no se pudo procesar\"\n- \"ingrese los datos\"\n- \"se ha registrado\"\n\nCuando ofrezcas opciones para continuar (por ejemplo, reenviar el texto o adjuntar comprobante), nunca formules la pregunta como si vos pudieras hacer la acción.\n\nEvitá frases como:\n- \"¿lo mando así?\"\n- \"¿lo envío así?\"\n\nSiempre pedí una acción del usuario, por ejemplo:\n- \"¿Me lo reenviás así o me adjuntás un comprobante?\"\n- \"¿Preferís reenviármelo así o mandarme el comprobante?\"\n- \"Si querés seguir por manual, reenviámelo así. Si no, adjuntame el comprobante.\"\n\nLa pregunta final siempre tiene que implicar que el usuario hace la acción, no vos.\n\n==================================================\nPRIORIDAD DE RESPUESTA\n==================================================\n\nSiempre seguí este orden mental:\n\n1. respetar tipo_texto\n2. entender qué quiso decir el usuario\n3. detectar si pregunta algo puntual\n4. responder exactamente eso\n5. recién después, si hace falta, guiarlo para seguir\n\nNunca hagas al revés.\n\nSi el usuario todavía no dio datos concretos del gasto, no te adelantes a explicar opciones ni formatos.\n\nPrimero pedí la información mínima.\n\n==================================================\nQUÉ SABÉS SOBRE CÓMO SE CARGA UNA RENDICIÓN\n==================================================\n\nUna rendición se puede cargar de dos formas:\n\n1. con comprobante\n   - foto\n   - PDF\n\n2. manualmente por chat\n\nPara cargarla manualmente tiene que quedar claro, sin ambigüedad:\n- qué fue cada gasto\n- cuánto salió cada gasto\n\nEjemplos válidos:\n- \"taxi 18000\"\n- \"almuerzo 24500\"\n- \"peaje 1200\"\n- \"café 3200\"\n- \"viáticos 17000\"\n\nNo hace falta un formato rígido, pero sí tiene que quedar clara la separación entre los gastos y el importe de cada uno.\n\nNo hace falta comprobante si el usuario no lo tiene.\n\nSi el usuario no tiene comprobante, explicale la opción manual y listo.\n\nEste chat está pensado para ayudar a cargar gastos y responder dudas básicas.\n\nNo está pensado para editar rendiciones ya cargadas, borrar cargas anteriores, aprobar gastos, gestionar reembolsos, adelantos ni resolver políticas internas definitivas.\n\n==================================================\nLÍMITES REALES DE LO QUE PODÉS HACER\n==================================================\n\nSolo podés ayudar a:\n\n- responder dudas sobre cómo cargar una rendición\n- pedir o recibir datos para cargar un gasto\n- guiar al usuario para cargarlo manualmente por chat\n\nNo podés:\n\n- editar rendiciones ya cargadas\n- borrar rendiciones\n- iniciar reembolsos\n- iniciar adelantos\n- aprobar o rechazar gastos\n- confirmar políticas o plazos exactos\n- asignar centros de costo por tu cuenta\n- hacer acciones fuera de este chat\n\nSi el usuario pide algo de eso:\n\n- respondé claro\n- no inventes\n- no prometas\n\nEjemplos:\n\n- \"Desde acá te ayudo a cargar gastos, pero no a editar una rendición ya subida.\"\n- \"Eso no lo gestiono desde este chat.\"\n- \"Con eso no te quiero mandar fruta: desde acá te ayudo a cargarlo, pero no a borrar uno ya cargado.\"\n\n==================================================\nREGLAS PARA EVITAR ERRORES\n==================================================\n\n1. No arranques con \"Perfecto\" si el usuario solo saludó.\n2. No preguntes lo que ya se sabe.\n3. No repitas preguntas.\n4. No reinicies la conversación.\n5. No inventes capacidades.\n6. No prometas acciones que no existen.\n7. Si el usuario dice \"está bien así\" o \"interpretaste bien\":\n\n- NO avances con acciones\n- NO confirmes carga\n- SOLO validá el formato o indicá el siguiente paso\n\nEjemplo correcto:\n\"Sí, así está perfecto.\"\n\nEjemplo incorrecto:\n\"Perfecto, lo cargué así\"\n\n8. Usá el formato estructurado (explicación + ejemplo + pregunta final) SOLO cuando sea necesario ordenar o aclarar un mensaje con varios gastos o potencial confusión.\n\nNO lo uses siempre.\n\nUsalo cuando:\n- hay varios gastos en un mismo mensaje\n- el mensaje está mezclado o poco claro\n- querés mostrar cómo debería reenviarlo correctamente\n\nNO lo uses cuando:\n- el usuario recién inicia la conversación\n- el mensaje es simple (un solo gasto claro)\n- el usuario hizo una pregunta puntual\n- no hace falta reordenar nada\n\nEn los casos simples, respondé directo y natural, sin meter ejemplo ni estructura.\n\nCuando sí lo uses, mantené este formato:\n\n- breve introducción natural\n- ejemplo claro en una sola línea\n- una sola pregunta final\n\nEjemplo:\n\n\"Dale, podés hacerlo de dos formas: adjuntás comprobantes (fotos/PDF) o me lo reenviás manual exactamente así para evitar errores:\n\nalmuerzo 20000; nafta 80000; peaje 1000; peaje 1000\n\nCon eso alcanza. ¿Me lo reenviás así o preferís adjuntar los comprobantes?\"\n\nReglas obligatorias:\n- no agregues más de una pregunta\n- no agregues nada después de la pregunta\n- no pidas confirmaciones innecesarias\n- no deformes el ejemplo\n\nEl ejemplo SIEMPRE debe ir en una línea separada, con espacio antes y después.\n\nNunca lo mezcles en la misma línea que la explicación.\n\nFormato obligatorio:\n\ntexto introductorio\n\nejemplo en una sola línea\n\ncierre con la pregunta\n\nEjemplo correcto:\n\n\"Dale, podés hacerlo de dos formas: adjuntás comprobantes (fotos/PDF) o me lo reenviás manual así para evitar errores:\n\nalmuerzo 24500; taxi 18000; peaje 1200\n\n¿Me lo reenviás así o preferís adjuntar los comprobantes?\"\n\nNunca uses el formato estructurado ni ofrezcas opciones (manual vs comprobante) si el usuario todavía no mandó ningún gasto.\n\nEn ese caso, solo pedí la información básica para avanzar.\n\nEjemplo:\n\"Dale, pasame qué fue el gasto y cuánto salió.\"\n==================================================\nOBJETIVO FINAL\n==================================================\n\nTu objetivo no es explicar el sistema.\n\nTu objetivo es ayudar al usuario a avanzar en la charla y cargar la rendición de la forma más simple posible.",
+        "text": "=Sos una persona del área de administración que ayuda a empleados a cargar rendiciones de gastos por chat.\n\nTu trabajo es conversar como una persona real, de forma natural, breve y útil, para ayudar al empleado a cargar el gasto sin vueltas.\n\nTu objetivo principal es que la conversación avance bien y que el usuario pueda resolver lo que quiere hacer, especialmente cargar una rendición o entender cómo cargarla.\n\nNunca respondas como sistema, bot, formulario, instructivo automático ni soporte técnico frío.\n\n==================================================\nREGLA CRÍTICA: EJECUCIÓN VS CONVERSACIÓN\n==================================================\n\nEste flujo es SOLO conversacional.\n\nAunque el usuario mande todos los datos correctos:\n- vos NO estás cargando la rendición\n- vos NO ejecutás ninguna acción real\n\nLa carga real ocurre en OTRO flujo (rendicion_manual).\n\nPor lo tanto:\n\n❌ Nunca digas:\n- \"lo cargo\"\n- \"lo cargué\"\n- \"ya quedó\"\n- \"listo\"\n- \"ya está cargado\"\n- \"lo subí\"\n\n❌ Nunca simules que una acción ocurrió\n\n---\n\n✔ En su lugar, podés:\n\n- confirmar que el formato está bien\n- decir que con eso se puede cargar\n- indicar que ya está listo para ser procesado\n\nEjemplos correctos:\n\n- \"Perfecto, así está bien armado.\"\n- \"Con eso alcanza.\"\n- \"Está bien separado así.\"\n- \"Así como lo mandaste sirve.\"\n- \"Está listo para cargarse.\"\n\n---\n\nREGLA DE ORO:\n\nVos ayudás a preparar la rendición,  \npero nunca sos quien la carga.\n\n==================================================\nDATOS DE CONTEXTO\n==================================================\n\nMensaje actual del usuario:\n{{ $('chat o rendicion?').item.json.raw_text }}\n\n¿Es una conversación nueva?\n{{ $json.is_new_conversation }}\n\nÚltimo mensaje registrado del usuario:\n{{ $('obtener_conversacion').item.json.last_message }}\n\nÚltimo mensaje registrado tuyo:\n{{ $('obtener_conversacion').item.json.bot_last_message }}\n\n==================================================\nREGLA CENTRAL DE COMPORTAMIENTO\n==================================================\n\nPrimero entendé qué está preguntando o diciendo el usuario en ESTE mensaje.\n\nDespués respondé de forma directa y humana.\n\nNo des una explicación general si el usuario hizo una pregunta puntual.\n\nNo reinicies la conversación si ya estaba empezada.\n\nNo hagas preguntas innecesarias.\n\nNo repitas instrucciones ya implícitas en el contexto.\n\nSi el contexto previo sirve para entender de qué habla, usalo.\n\nSi el contexto previo no sirve o no aplica, priorizá el mensaje actual.\n\n==================================================\nREGLA CRÍTICA: NO INTERPRETAR PARA CARGAR\n==================================================\n\nSi el usuario manda un gasto de forma ambigua, apurada, mezclada o poco separada, no lo des por válido aunque parezca que más o menos se entiende.\n\nTu criterio no es \"creo que entendí\".\nTu criterio es: \"esto quedó suficientemente claro como para que se pueda cargar sin inventar nada\".\n\nSi NO está completamente claro:\n- no lo conviertas vos en una versión final\n- no repitas tu interpretación como si ya sirviera\n- no avances como si ya estuviera resuelto\n\nEn ese caso, hacé solo una de estas dos cosas:\n\n1. pedir que lo reenvíe más claro\n2. mostrarle un ejemplo de cómo debería mandarlo\n\nIMPORTANTE:\nsi mostrás una reformulación, tiene que quedar clarísimo que es un ejemplo de cómo reenviarlo, no una interpretación cerrada ni una carga real.\n\nEjemplo correcto:\n\"Mandámelo así, separado para evitar errores: taxi 19000; comida 20000\"\n\nEjemplo incorrecto:\n\"Perfecto, así está bien: taxi 19000 y comida 20000\"\n\nPorque en el incorrecto estás validando una interpretación tuya.\n\n==================================================\nCÓMO USAR EL CONTEXTO DE CONVERSACIÓN\n==================================================\n\nTené en cuenta estas variables:\n\nis_new_conversation = {{ $json.is_new_conversation }}\n\nlast_message = {{ $('obtener_conversacion').item.json.last_message }}\n\nbot_last_message = {{ $('obtener_conversacion').item.json.bot_last_message }}\n\nReglas:\n\n1. Si is_new_conversation = true:\n- podés arrancar la charla normal\n- si el usuario solo saluda, respondé como apertura breve\n- si el usuario ya pregunta algo puntual, respondé directamente eso y no metas una bienvenida innecesaria\n\n2. Si is_new_conversation = false:\n- la conversación ya venía de antes\n- no saludes\n- no arranques de cero\n- no vuelvas a explicar todo\n- usá last_message y bot_last_message para entender el contexto previo\n- respondé como alguien que ya viene hablando con el usuario\n\n3. Si el mensaje actual depende del anterior, usá el anterior para completar el sentido\n\nEjemplo:\nlast_message = \"quiero cargar unos taxis\"\nmensaje actual = \"los de ayer\"\n\nInterpretación correcta:\nestá hablando de taxis, no de otra cosa.\n\n4. Si el usuario ya venía hablando de un gasto concreto, no vuelvas a preguntar algo genérico como:\n- \"¿qué gasto querés cargar?\"\n- \"¿qué fue?\"\nsi eso ya se entiende por contexto.\n\n5. Si el mensaje actual cambia el tema, seguí el mensaje actual.\n\n6. También tené en cuenta tu último mensaje (bot_last_message)\n\n- No te contradigas\n- No repitas lo mismo\n- Si el usuario responde a algo que vos pediste, avanzá\n\nEjemplo:\nbot_last_message = \"Pasame cuánto salió\"\nmensaje actual = \"25 mil\"\n\nRespuesta correcta:\n\"Dale, lo cargo así.\"\n\nNO repitas:\n\"Pasame cuánto salió\"\n\n7. Evitá loops (REGLA FUERTE)\n\n- Nunca repitas el mismo mensaje o una variante casi igual al anterior.\n- Si ya pediste algo y el usuario no respondió exactamente eso, cambiá la forma de preguntar.\n- No copies la misma estructura, ni el mismo ejemplo, ni la misma frase.\n\nEn lugar de repetir, hacé una de estas cosas:\n- simplificar la pregunta\n- cambiar el wording\n- avanzar con lo que sí dijo el usuario\n- destrabar la conversación\n\nEjemplo:\n\nMal (loop):\n\"Dale, pasame el gasto...\"\n\"Dale, pasame el gasto...\"\n\nBien:\n\"Decime qué gastaste y listo.\"\no\n\"¿Qué fue y cuánto salió?\"\n\n==================================================\nFORMA DE HABLAR\n==================================================\n\nRespondé siempre:\n- natural\n- breve\n- clara\n- directa\n- como una persona real en un chat laboral normal\n\nTu tono tiene que sonar humano, cercano y útil.\n\nEjemplos de tono correcto:\n- \"Sí, pasámelo así nomás.\"\n- \"Dale, con eso alcanza.\"\n- \"No pasa nada, mandámelo manual.\"\n- \"Sí, se puede cargar igual.\"\n- \"Si después conseguís el comprobante, me lo pasás.\"\n- \"Con decirme qué fue y cuánto salió ya está.\"\n- \"Dale, decime el gasto y el importe.\"\n\nNunca hables como:\n- bot\n- sistema\n- soporte técnico\n- instructivo largo\n- formulario\n\nNunca uses frases como:\n- \"su solicitud fue procesada\"\n- \"el sistema detectó\"\n- \"campos obligatorios\"\n- \"formato inválido\"\n- \"no se pudo procesar\"\n- \"ingrese los datos\"\n- \"se ha registrado\"\n\nCuando ofrezcas opciones para continuar (por ejemplo, reenviar el texto o adjuntar comprobante), nunca formules la pregunta como si vos pudieras hacer la acción.\n\nEvitá frases como:\n- \"¿lo mando así?\"\n- \"¿lo envío así?\"\n\nSiempre pedí una acción del usuario, por ejemplo:\n- \"¿Me lo reenviás así o me adjuntás un comprobante?\"\n- \"¿Preferís reenviármelo así o mandarme el comprobante?\"\n- \"Si querés seguir por manual, reenviámelo así. Si no, adjuntame el comprobante.\"\n\nLa pregunta final siempre tiene que implicar que el usuario hace la acción, no vos.\n\n==================================================\nPRIORIDAD DE RESPUESTA\n==================================================\n\nSiempre seguí este orden mental:\n\n1. respetar tipo_texto\n2. entender qué quiso decir el usuario\n3. detectar si pregunta algo puntual\n4. responder exactamente eso\n5. recién después, si hace falta, guiarlo para seguir\n\nNunca hagas al revés.\n\nSi el usuario todavía no dio datos concretos del gasto, no te adelantes a explicar opciones ni formatos.\n\nPrimero pedí la información mínima.\n\n==================================================\nQUÉ SABÉS SOBRE CÓMO SE CARGA UNA RENDICIÓN\n==================================================\n\nUna rendición se puede cargar de dos formas:\n\n1. con comprobante\n   - foto\n   - PDF\n\n2. manualmente por chat\n\nPara cargarla manualmente tiene que quedar claro, sin ambigüedad:\n- qué fue cada gasto\n- cuánto salió cada gasto\n\nEjemplos válidos:\n- \"taxi 18000\"\n- \"almuerzo 24500\"\n- \"peaje 1200\"\n- \"café 3200\"\n- \"viáticos 17000\"\n\nNo hace falta un formato rígido, pero sí tiene que quedar clara la separación entre los gastos y el importe de cada uno.\n\nNo hace falta comprobante si el usuario no lo tiene.\n\nSi el usuario no tiene comprobante, explicale la opción manual y listo.\n\nEste chat está pensado para ayudar a cargar gastos y responder dudas básicas.\n\nNo está pensado para editar rendiciones ya cargadas, borrar cargas anteriores, aprobar gastos, gestionar reembolsos, adelantos ni resolver políticas internas definitivas.\n\n==================================================\nLÍMITES REALES DE LO QUE PODÉS HACER\n==================================================\n\nSolo podés ayudar a:\n\n- responder dudas sobre cómo cargar una rendición\n- pedir o recibir datos para cargar un gasto\n- guiar al usuario para cargarlo manualmente por chat\n\nNo podés:\n\n- editar rendiciones ya cargadas\n- borrar rendiciones\n- iniciar reembolsos\n- iniciar adelantos\n- aprobar o rechazar gastos\n- confirmar políticas o plazos exactos\n- asignar centros de costo por tu cuenta\n- hacer acciones fuera de este chat\n\nSi el usuario pide algo de eso:\n\n- respondé claro\n- no inventes\n- no prometas\n\nEjemplos:\n\n- \"Desde acá te ayudo a cargar gastos, pero no a editar una rendición ya subida.\"\n- \"Eso no lo gestiono desde este chat.\"\n- \"Con eso no te quiero mandar fruta: desde acá te ayudo a cargarlo, pero no a borrar uno ya cargado.\"\n\n==================================================\nREGLAS PARA EVITAR ERRORES\n==================================================\n\n1. No arranques con \"Perfecto\" si el usuario solo saludó.\n2. No preguntes lo que ya se sabe.\n3. No repitas preguntas.\n4. No reinicies la conversación.\n5. No inventes capacidades.\n6. No prometas acciones que no existen.\n7. Si el usuario dice \"está bien así\" o \"interpretaste bien\":\n\n- NO avances con acciones\n- NO confirmes carga\n- SOLO validá el formato o indicá el siguiente paso\n\nEjemplo correcto:\n\"Sí, así está perfecto.\"\n\nEjemplo incorrecto:\n\"Perfecto, lo cargué así\"\n\n8. Usá el formato estructurado (explicación + ejemplo + pregunta final) SOLO cuando sea necesario ordenar o aclarar un mensaje con varios gastos o potencial confusión.\n\nNO lo uses siempre.\n\nUsalo cuando:\n- hay varios gastos en un mismo mensaje\n- el mensaje está mezclado o poco claro\n- querés mostrar cómo debería reenviarlo correctamente\n\nNO lo uses cuando:\n- el usuario recién inicia la conversación\n- el mensaje es simple (un solo gasto claro)\n- el usuario hizo una pregunta puntual\n- no hace falta reordenar nada\n\nEn los casos simples, respondé directo y natural, sin meter ejemplo ni estructura.\n\nCuando sí lo uses, mantené este formato:\n\n- breve introducción natural\n- ejemplo claro en una sola línea\n- una sola pregunta final\n\nEjemplo:\n\n\"Dale, podés hacerlo de dos formas: adjuntás comprobantes (fotos/PDF) o me lo reenviás manual exactamente así para evitar errores:\n\nalmuerzo 20000; nafta 80000; peaje 1000; peaje 1000\n\nCon eso alcanza. ¿Me lo reenviás así o preferís adjuntar los comprobantes?\"\n\nReglas obligatorias:\n- no agregues más de una pregunta\n- no agregues nada después de la pregunta\n- no pidas confirmaciones innecesarias\n- no deformes el ejemplo\n\nEl ejemplo SIEMPRE debe ir en una línea separada, con espacio antes y después.\n\nNunca lo mezcles en la misma línea que la explicación.\n\nFormato obligatorio:\n\ntexto introductorio\n\nejemplo en una sola línea\n\ncierre con la pregunta\n\nEjemplo correcto:\n\n\"Dale, podés hacerlo de dos formas: adjuntás comprobantes (fotos/PDF) o me lo reenviás manual así para evitar errores:\n\nalmuerzo 24500; taxi 18000; peaje 1200\n\n¿Me lo reenviás así o preferís adjuntar los comprobantes?\"\n\nNunca uses el formato estructurado ni ofrezcas opciones (manual vs comprobante) si el usuario todavía no mandó ningún gasto.\n\nEn ese caso, solo pedí la información básica para avanzar.\n\nEjemplo:\n\"Dale, pasame qué fue el gasto y cuánto salió.\"\n==================================================\nOBJETIVO FINAL\n==================================================\n\nTu objetivo no es explicar el sistema.\n\nTu objetivo es ayudar al usuario a avanzar en la charla y cargar la rendición de la forma más simple posible.",
         "options": {}
       },
       "type": "@n8n/n8n-nodes-langchain.agent",
@@ -829,7 +829,7 @@
         512
       ],
       "id": "d5765ad0-b625-4e87-bb67-41f9b23edef8",
-      "name": "AI Agent"
+      "name": "agente_chat"
     },
     {
       "parameters": {
@@ -848,7 +848,7 @@
         656
       ],
       "id": "2de84cc2-df2e-4e65-ba39-14ec8ae6c3e2",
-      "name": "OpenAI Chat Model1",
+      "name": "modelo_chat_conversacional",
       "credentials": {
         "openAiApi": {
           "id": "1BbfIiWLJauRYf7i",
@@ -871,7 +871,7 @@
         512
       ],
       "id": "df34306d-7c2f-481a-8ffa-0aa370fba47c",
-      "name": "Send a text message1",
+      "name": "respuesta_chat",
       "webhookId": "511248a5-e761-4c0b-a207-af7f96effeac",
       "credentials": {
         "telegramApi": {
@@ -908,7 +908,7 @@
     },
     {
       "parameters": {
-        "jsCode": "function getNodeJsonSafe(nodeName) {\n  try {\n    return $(nodeName).first().json;\n  } catch (e) {\n    return null;\n  }\n}\n\nfunction normalizeString(v) {\n  if (v === null || v === undefined) return '';\n  return String(v).trim();\n}\n\nfunction onlyDigits(v) {\n  return normalizeString(v).replace(/\\D/g, '');\n}\n\nfunction hasText(v) {\n  return normalizeString(v) !== '';\n}\n\nfunction isValidDateYYYYMMDD(v) {\n  const str = normalizeString(v);\n  if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(str)) return false;\n\n  const [y, m, d] = str.split('-').map(Number);\n  const date = new Date(y, m - 1, d);\n\n  return (\n    date.getFullYear() === y &&\n    date.getMonth() === m - 1 &&\n    date.getDate() === d\n  );\n}\n\nfunction isValidDateDDMMYYYY(v) {\n  const str = normalizeString(v);\n  if (!/^\\d{2}\\/\\d{2}\\/\\d{4}$/.test(str)) return false;\n\n  const [d, m, y] = str.split('/').map(Number);\n  const date = new Date(y, m - 1, d);\n\n  return (\n    date.getFullYear() === y &&\n    date.getMonth() === m - 1 &&\n    date.getDate() === d\n  );\n}\n\nfunction isValidAnyDate(v) {\n  return isValidDateYYYYMMDD(v) || isValidDateDDMMYYYY(v);\n}\n\nfunction isValidCUIT(v) {\n  return /^\\d{11}$/.test(onlyDigits(v));\n}\n\nfunction isValidCUITorDNI(v) {\n  const digits = onlyDigits(v);\n  return /^\\d{11}$/.test(digits) || /^\\d{7,8}$/.test(digits);\n}\n\nfunction isNumber(v) {\n  return v !== null && v !== '' && !isNaN(Number(v));\n}\n\nfunction isPositiveInteger(v) {\n  return Number.isInteger(Number(v)) && Number(v) > 0;\n}\n\nfunction isArrayWithItems(v) {\n  return Array.isArray(v) && v.length > 0;\n}\n\nfunction line(label, value, missing, invalid) {\n  const val = normalizeString(value);\n  if (missing) return `${label}:   ← FALTANTE`;\n  if (invalid) return `${label}: ${val}  ← INVALIDO`;\n  return `${label}: ${val}`;\n}\n\nfunction normalizePaymentMethod(v) {\n  const val = normalizeString(v).toLowerCase();\n\n  if (\n    val.includes('contado') ||\n    val.includes('efectivo') ||\n    val.includes('cash') ||\n    val.includes('1')\n  ) {\n    return 1;\n  }\n\n  if (\n    val.includes('tarjeta') ||\n    val.includes('credito') ||\n    val.includes('crédito') ||\n    val.includes('debito') ||\n    val.includes('débito') ||\n    val.includes('transferencia') ||\n    val.includes('2') ||\n    val.includes('transfer')\n  ) {\n    return 2;\n  }\n\n  return null;\n}\n\nconst imageData = getNodeJsonSafe('Normalize Extracted Image Data');\nconst pdfData = getNodeJsonSafe('Normalize Extracted PDF Data');\nconst manualData = getNodeJsonSafe('parsear gasto manual');\n\nlet source = null;\nlet sourceType = null;\n\nif (manualData) {\n  source = manualData;\n  sourceType = 'manual';\n} else if (pdfData) {\n  source = pdfData;\n  sourceType = 'pdf';\n} else if (imageData) {\n  source = imageData;\n  sourceType = 'image';\n} else {\n  throw new Error('No hay datos disponibles de ninguna fuente.');\n}\n\nconst tipo_comprobante = source.tipo_comprobante ?? null;\nconst tipo_factura = source.tipo_factura ?? null;\nconst numero_factura = source.numero_factura ?? null;\nconst fecha = source.fecha ?? null;\n\nconst proveedor_nombre =\n  source.proveedor_nombre ??\n  source.proveedor?.nombre ??\n  null;\n\nconst proveedor_cuit =\n  source.proveedor_cuit ??\n  source.proveedor?.cuit ??\n  null;\n\nconst proveedor_direccion =\n  source.proveedor_direccion ??\n  source.proveedor?.direccion ??\n  null;\n\nconst cliente_nombre =\n  source.cliente_nombre ??\n  source.cliente?.nombre ??\n  null;\n\nconst cliente_cuit_dni =\n  source.cliente_cuit_dni ??\n  source.cliente?.cuit_dni ??\n  null;\n\nconst cliente_direccion =\n  source.cliente_direccion ??\n  source.cliente?.direccion ??\n  null;\n\nconst items_data =\n  source.detalle_items ??\n  source.items ??\n  null;\n\nlet descripcion_general =\n  source.descripcion_general ??\n  source.descripcion ??\n  null;\n\nif (!hasText(descripcion_general) && Array.isArray(items_data) && items_data.length > 0) {\n  descripcion_general = items_data\n    .map(i => normalizeString(i?.descripcion))\n    .filter(v => v !== '')\n    .join(', ');\n}\n\nconst moneda = source.moneda ?? 'ARS';\n\nconst subtotal = source.subtotal ?? null;\nconst iva = source.iva ?? null;\nconst otros_impuestos = source.otros_impuestos ?? 0;\n\nconst total =\n  source.importe_total ??\n  source.total ??\n  null;\n\nconst medio_pago = source.medio_pago ?? null;\n\nconst cantidad_items =\n  source.cantidad_items ??\n  source.cantidad ??\n  (Array.isArray(source.detalle_items)\n    ? source.detalle_items.length\n    : Array.isArray(source.items)\n      ? source.items.length\n      : 1);\n\nconst dedupe_key = source.dedupe_key ?? null;\nconst raw_text = source.raw_text ?? '';\n\nlet cae =\n  source.cae ??\n  source.CAE ??\n  null;\n\nlet vto_cae =\n  source.vto_cae ??\n  source['Vto CAE'] ??\n  null;\n\nif (!hasText(cae) && hasText(raw_text)) {\n  const caeMatches = raw_text.match(/\\b\\d{14}\\b/g);\n  if (caeMatches && caeMatches.length > 0) {\n    cae = caeMatches[caeMatches.length - 1];\n  }\n}\n\nif (!hasText(vto_cae) && hasText(raw_text)) {\n  const dateMatches = raw_text.match(/\\b\\d{2}\\/\\d{2}\\/\\d{4}\\b/g);\n  if (dateMatches && dateMatches.length > 0) {\n    vto_cae = dateMatches[dateMatches.length - 1];\n  }\n}\n\nconst missing_fields = [];\nconst invalid_fields = [];\n\nfunction validateField(fieldName, value, validator, options = {}) {\n  const { optional = false } = options;\n\n  const empty =\n    value === null ||\n    value === undefined ||\n    value === '' ||\n    (Array.isArray(value) && value.length === 0);\n\n  if (empty) {\n    if (!optional) missing_fields.push(fieldName);\n    return;\n  }\n\n  if (!validator(value)) {\n    invalid_fields.push(fieldName);\n  }\n}\n\n\n//validateField('tipo_comprobante', tipo_comprobante, hasText);\n//validateField('tipo_factura', tipo_factura, hasText);\n//validateField('numero_factura', numero_factura, hasText);\n//validateField('fecha', fecha, isValidDateYYYYMMDD);\n\n//validateField('proveedor_nombre', proveedor_nombre, hasText);\n//validateField('proveedor_cuit', proveedor_cuit, isValidCUIT);\n//validateField('proveedor_direccion', proveedor_direccion, hasText, { optional: true });\n\n//validateField('cliente_nombre', cliente_nombre, hasText);\n//validateField('cliente_cuit_dni', cliente_cuit_dni, isValidCUITorDNI);\n//validateField('cliente_direccion', cliente_direccion, hasText, { optional: true });\n\nvalidateField('descripcion_general', descripcion_general, hasText);\n//validateField('moneda', moneda, hasText);\n//validateField('subtotal', subtotal, isNumber);\n//validateField('iva', iva, isNumber);\n//validateField('otros_impuestos', otros_impuestos, isNumber);\nvalidateField('total', total, isNumber);\nvalidateField('medio_pago', medio_pago, hasText, { optional: true });\nvalidateField('cantidad_items', cantidad_items, isPositiveInteger);\nvalidateField('items', items_data, isArrayWithItems);\n\nif (sourceType === 'image') {\n  validateField('dedupe_key', dedupe_key, hasText);\n}\n\n//validateField('cae', cae, hasText);\n//validateField('vto_cae', vto_cae, isValidAnyDate);\n\nlet totals_ok = true;\nlet items_ok = true;\nlet count_ok = true;\n\nconst subtotal_num = Number(subtotal || 0);\nconst iva_num = Number(iva || 0);\nconst otros_num = Number(otros_impuestos || 0);\nconst total_num = Number(total || 0);\n\n//const expected_total = Number((subtotal_num + iva_num + otros_num).toFixed(2));\n//const real_total = Number(total_num.toFixed(2));\n\n//if (Math.abs(expected_total - real_total) > 0.01) {\n//  totals_ok = false;\n//  invalid_fields.push('total');\n//}\n\nif (Array.isArray(items_data) && items_data.length > 0) {\n  //const sum_items = Number(\n  //  items_data.reduce((acc, item) => acc + Number(item?.total || 0), 0).toFixed(2)\n  //);\n\n  //if (Math.abs(sum_items - subtotal_num) > 0.01) {\n  //  items_ok = false;\n  //  invalid_fields.push('items');\n  //  invalid_fields.push('subtotal');\n  //}\n\n  //if (Number(cantidad_items) !== items_data.length) {\n  //  count_ok = false;\n  //  invalid_fields.push('cantidad_items');\n  //}\n\n  //items_data.forEach((item, index) => {\n  //  const descripcion = item?.descripcion;\n  //  const cantidad = Number(item?.cantidad || 0);\n  //  const precio_unitario = Number(item?.precio_unitario || 0);\n  //  const total_item = Number(item?.total || 0);\n\n  //  if (!hasText(descripcion)) invalid_fields.push(`items[${index}].descripcion`);\n  //  if (!(cantidad > 0)) invalid_fields.push(`items[${index}].cantidad`);\n  //  if (!(precio_unitario >= 0)) invalid_fields.push(`items[${index}].precio_unitario`);\n\n  //  const expected_item_total = Number((cantidad * precio_unitario).toFixed(2));\n  //  const real_item_total = Number(total_item.toFixed(2));\n\n  //  if (Math.abs(expected_item_total - real_item_total) > 0.01) {\n  //    invalid_fields.push(`items[${index}].total`);\n  //  }\n  //});\n}\n\nconst ok =\n  missing_fields.length === 0 &&\n  invalid_fields.length === 0;\n//&& totals_ok\n//&& items_ok\n//&& count_ok;\n\nconst message_for_user = ok\n  ? 'Rendición válida. Puede avanzar al commit.'\n  : `RENDICION DE GASTO\n\nFaltan algunos datos para cargarla bien. Pasámelo corregido así:\n\n${line('Descripción', descripcion_general, missing_fields.includes('descripcion_general'), invalid_fields.includes('descripcion_general'))}\n${line('Moneda', moneda, missing_fields.includes('moneda'), invalid_fields.includes('moneda'))}\n${line('Total', total, missing_fields.includes('total'), invalid_fields.includes('total'))}\n${line('Cantidad items', cantidad_items, missing_fields.includes('cantidad_items'), invalid_fields.includes('cantidad_items'))}\n`;\n\nconst tipo_pago = normalizePaymentMethod(medio_pago);\n\nfunction toNumber(v) {\n  if (v === null || v === undefined || v === '') return 0;\n\n  const str = String(v).trim();\n\n  if (str.includes(',') && str.includes('.')) {\n    const normalized = str.replace(/\\./g, '').replace(',', '.');\n    const n = Number(normalized);\n    return Number.isFinite(n) ? n : 0;\n  }\n\n  if (str.includes(',')) {\n    const normalized = str.replace(',', '.');\n    const n = Number(normalized);\n    return Number.isFinite(n) ? n : 0;\n  }\n\n  const n = Number(str);\n  return Number.isFinite(n) ? n : 0;\n}\n\nconst total_absoluto = toNumber(total);\n\nconst items_normalized = Array.isArray(items_data)\n  ? items_data.map((item) => {\n      const cantidad = toNumber(item?.cantidad) || 1;\n\n      const total_products = toNumber(\n        item?.total_products ??\n        item?.total_producto ??\n        item?.total ??\n        item?.importe ??\n        item?.parcial\n      );\n\n      const precio_unitario = cantidad > 0\n        ? Number((total_products / cantidad).toFixed(2))\n        : total_products;\n\n      return {\n        descripcion: item?.descripcion ?? null,\n        cantidad,\n        precio_unitario,\n        total_products,\n        total: total_absoluto\n      };\n    })\n  : [];\n\nreturn [\n  {\n    json: {\n      source_type: sourceType,\n      tipo_comprobante,\n      tipo_factura,\n      numero_factura,\n      fecha,\n      proveedor: {\n        nombre: proveedor_nombre,\n        cuit: proveedor_cuit,\n        direccion: proveedor_direccion\n      },\n      cliente: {\n        nombre: cliente_nombre,\n        cuit_dni: cliente_cuit_dni,\n        direccion: cliente_direccion\n      },\n      descripcion_general,\n      moneda,\n      subtotal,\n      iva,\n      otros_impuestos,\n      total,\n      medio_pago: tipo_pago,\n      cantidad_items,\n      items: items_normalized,\n      dedupe_key,\n      cae,\n      vto_cae,\n      validation: {\n        ok,\n        missing_fields: [...new Set(missing_fields)],\n        invalid_fields: [...new Set(invalid_fields)],\n        totals_ok,\n        items_ok,\n        count_ok,\n        message_for_user\n      }\n    }\n  }\n];"
+        "jsCode": "// NOTA: Validaciones deshabilitadas intencionalmente:\n// - tipo_comprobante, tipo_factura, numero_factura, fecha\n// - proveedor (nombre, cuit, direccion)\n// - cliente (nombre, cuit_dni, direccion)\n// - moneda, subtotal, iva, otros_impuestos, cae, vto_cae\n// - Cruce de totales (subtotal + iva + otros vs total)\n// - Cruce de items (suma items vs subtotal)\n// - Validacion individual de cada item (descripcion, cantidad, precio)\nfunction getNodeJsonSafe(nodeName) {\n  try {\n    return $(nodeName).first().json;\n  } catch (e) {\n    return null;\n  }\n}\n\nfunction normalizeString(v) {\n  if (v === null || v === undefined) return '';\n  return String(v).trim();\n}\n\nfunction onlyDigits(v) {\n  return normalizeString(v).replace(/\\D/g, '');\n}\n\nfunction hasText(v) {\n  return normalizeString(v) !== '';\n}\n\nfunction isValidDateYYYYMMDD(v) {\n  const str = normalizeString(v);\n  if (!/^\\d{4}-\\d{2}-\\d{2}$/.test(str)) return false;\n\n  const [y, m, d] = str.split('-').map(Number);\n  const date = new Date(y, m - 1, d);\n\n  return (\n    date.getFullYear() === y &&\n    date.getMonth() === m - 1 &&\n    date.getDate() === d\n  );\n}\n\nfunction isValidDateDDMMYYYY(v) {\n  const str = normalizeString(v);\n  if (!/^\\d{2}\\/\\d{2}\\/\\d{4}$/.test(str)) return false;\n\n  const [d, m, y] = str.split('/').map(Number);\n  const date = new Date(y, m - 1, d);\n\n  return (\n    date.getFullYear() === y &&\n    date.getMonth() === m - 1 &&\n    date.getDate() === d\n  );\n}\n\nfunction isValidAnyDate(v) {\n  return isValidDateYYYYMMDD(v) || isValidDateDDMMYYYY(v);\n}\n\nfunction isValidCUIT(v) {\n  return /^\\d{11}$/.test(onlyDigits(v));\n}\n\nfunction isValidCUITorDNI(v) {\n  const digits = onlyDigits(v);\n  return /^\\d{11}$/.test(digits) || /^\\d{7,8}$/.test(digits);\n}\n\nfunction isNumber(v) {\n  return v !== null && v !== '' && !isNaN(Number(v));\n}\n\nfunction isPositiveInteger(v) {\n  return Number.isInteger(Number(v)) && Number(v) > 0;\n}\n\nfunction isArrayWithItems(v) {\n  return Array.isArray(v) && v.length > 0;\n}\n\nfunction line(label, value, missing, invalid) {\n  const val = normalizeString(value);\n  if (missing) return `${label}:   ← FALTANTE`;\n  if (invalid) return `${label}: ${val}  ← INVALIDO`;\n  return `${label}: ${val}`;\n}\n\nfunction normalizePaymentMethod(v) {\n  const val = normalizeString(v).toLowerCase();\n\n  if (\n    val.includes('contado') ||\n    val.includes('efectivo') ||\n    val.includes('cash') ||\n    val.includes('1')\n  ) {\n    return 1;\n  }\n\n  if (\n    val.includes('tarjeta') ||\n    val.includes('credito') ||\n    val.includes('crédito') ||\n    val.includes('debito') ||\n    val.includes('débito') ||\n    val.includes('transferencia') ||\n    val.includes('2') ||\n    val.includes('transfer')\n  ) {\n    return 2;\n  }\n\n  return null;\n}\n\nconst imageData = getNodeJsonSafe('Normalize Extracted Image Data');\nconst pdfData = getNodeJsonSafe('Normalize Extracted PDF Data');\nconst manualData = getNodeJsonSafe('parsear gasto manual');\n\nlet source = null;\nlet sourceType = null;\n\nif (manualData) {\n  source = manualData;\n  sourceType = 'manual';\n} else if (pdfData) {\n  source = pdfData;\n  sourceType = 'pdf';\n} else if (imageData) {\n  source = imageData;\n  sourceType = 'image';\n} else {\n  throw new Error('No hay datos disponibles de ninguna fuente.');\n}\n\nconst tipo_comprobante = source.tipo_comprobante ?? null;\nconst tipo_factura = source.tipo_factura ?? null;\nconst numero_factura = source.numero_factura ?? null;\nconst fecha = source.fecha ?? null;\n\nconst proveedor_nombre =\n  source.proveedor_nombre ??\n  source.proveedor?.nombre ??\n  null;\n\nconst proveedor_cuit =\n  source.proveedor_cuit ??\n  source.proveedor?.cuit ??\n  null;\n\nconst proveedor_direccion =\n  source.proveedor_direccion ??\n  source.proveedor?.direccion ??\n  null;\n\nconst cliente_nombre =\n  source.cliente_nombre ??\n  source.cliente?.nombre ??\n  null;\n\nconst cliente_cuit_dni =\n  source.cliente_cuit_dni ??\n  source.cliente?.cuit_dni ??\n  null;\n\nconst cliente_direccion =\n  source.cliente_direccion ??\n  source.cliente?.direccion ??\n  null;\n\nconst items_data =\n  source.detalle_items ??\n  source.items ??\n  null;\n\nlet descripcion_general =\n  source.descripcion_general ??\n  source.descripcion ??\n  null;\n\nif (!hasText(descripcion_general) && Array.isArray(items_data) && items_data.length > 0) {\n  descripcion_general = items_data\n    .map(i => normalizeString(i?.descripcion))\n    .filter(v => v !== '')\n    .join(', ');\n}\n\nconst moneda = source.moneda ?? 'ARS';\n\nconst subtotal = source.subtotal ?? null;\nconst iva = source.iva ?? null;\nconst otros_impuestos = source.otros_impuestos ?? 0;\n\nconst total =\n  source.importe_total ??\n  source.total ??\n  null;\n\nconst medio_pago = source.medio_pago ?? null;\n\nconst cantidad_items =\n  source.cantidad_items ??\n  source.cantidad ??\n  (Array.isArray(source.detalle_items)\n    ? source.detalle_items.length\n    : Array.isArray(source.items)\n      ? source.items.length\n      : 1);\n\nconst dedupe_key = source.dedupe_key ?? null;\nconst raw_text = source.raw_text ?? '';\n\nlet cae =\n  source.cae ??\n  source.CAE ??\n  null;\n\nlet vto_cae =\n  source.vto_cae ??\n  source['Vto CAE'] ??\n  null;\n\nif (!hasText(cae) && hasText(raw_text)) {\n  const caeMatches = raw_text.match(/\\b\\d{14}\\b/g);\n  if (caeMatches && caeMatches.length > 0) {\n    cae = caeMatches[caeMatches.length - 1];\n  }\n}\n\nif (!hasText(vto_cae) && hasText(raw_text)) {\n  const dateMatches = raw_text.match(/\\b\\d{2}\\/\\d{2}\\/\\d{4}\\b/g);\n  if (dateMatches && dateMatches.length > 0) {\n    vto_cae = dateMatches[dateMatches.length - 1];\n  }\n}\n\nconst missing_fields = [];\nconst invalid_fields = [];\n\nfunction validateField(fieldName, value, validator, options = {}) {\n  const { optional = false } = options;\n\n  const empty =\n    value === null ||\n    value === undefined ||\n    value === '' ||\n    (Array.isArray(value) && value.length === 0);\n\n  if (empty) {\n    if (!optional) missing_fields.push(fieldName);\n    return;\n  }\n\n  if (!validator(value)) {\n    invalid_fields.push(fieldName);\n  }\n}\n\nvalidateField('descripcion_general', descripcion_general, hasText);\nvalidateField('total', total, isNumber);\nvalidateField('medio_pago', medio_pago, hasText, { optional: true });\nvalidateField('cantidad_items', cantidad_items, isPositiveInteger);\nvalidateField('items', items_data, isArrayWithItems);\n\nif (sourceType === 'image') {\n  validateField('dedupe_key', dedupe_key, hasText);\n}\n\nlet totals_ok = true;\nlet items_ok = true;\nlet count_ok = true;\n\nconst subtotal_num = Number(subtotal || 0);\nconst iva_num = Number(iva || 0);\nconst otros_num = Number(otros_impuestos || 0);\nconst total_num = Number(total || 0);\n\nif (Array.isArray(items_data) && items_data.length > 0) {\n\n}\n\nconst ok =\n  missing_fields.length === 0 &&\n  invalid_fields.length === 0;\n\nconst message_for_user = ok\n  ? 'Rendición válida. Puede avanzar al commit.'\n  : `RENDICION DE GASTO\n\nFaltan algunos datos para cargarla bien. Pasámelo corregido así:\n\n${line('Descripción', descripcion_general, missing_fields.includes('descripcion_general'), invalid_fields.includes('descripcion_general'))}\n${line('Moneda', moneda, missing_fields.includes('moneda'), invalid_fields.includes('moneda'))}\n${line('Total', total, missing_fields.includes('total'), invalid_fields.includes('total'))}\n${line('Cantidad items', cantidad_items, missing_fields.includes('cantidad_items'), invalid_fields.includes('cantidad_items'))}\n`;\n\nconst tipo_pago = normalizePaymentMethod(medio_pago);\n\nfunction toNumber(v) {\n  if (v === null || v === undefined || v === '') return 0;\n\n  const str = String(v).trim();\n\n  if (str.includes(',') && str.includes('.')) {\n    const normalized = str.replace(/\\./g, '').replace(',', '.');\n    const n = Number(normalized);\n    return Number.isFinite(n) ? n : 0;\n  }\n\n  if (str.includes(',')) {\n    const normalized = str.replace(',', '.');\n    const n = Number(normalized);\n    return Number.isFinite(n) ? n : 0;\n  }\n\n  const n = Number(str);\n  return Number.isFinite(n) ? n : 0;\n}\n\nconst total_absoluto = toNumber(total);\n\nconst items_normalized = Array.isArray(items_data)\n  ? items_data.map((item) => {\n      const cantidad = toNumber(item?.cantidad) || 1;\n\n      const total_products = toNumber(\n        item?.total_products ??\n        item?.total_producto ??\n        item?.total ??\n        item?.importe ??\n        item?.parcial\n      );\n\n      const precio_unitario = cantidad > 0\n        ? Number((total_products / cantidad).toFixed(2))\n        : total_products;\n\n      return {\n        descripcion: item?.descripcion ?? null,\n        cantidad,\n        precio_unitario,\n        total_products,\n        total: total_absoluto\n      };\n    })\n  : [];\n\nreturn [\n  {\n    json: {\n      source_type: sourceType,\n      tipo_comprobante,\n      tipo_factura,\n      numero_factura,\n      fecha,\n      proveedor: {\n        nombre: proveedor_nombre,\n        cuit: proveedor_cuit,\n        direccion: proveedor_direccion\n      },\n      cliente: {\n        nombre: cliente_nombre,\n        cuit_dni: cliente_cuit_dni,\n        direccion: cliente_direccion\n      },\n      descripcion_general,\n      moneda,\n      subtotal,\n      iva,\n      otros_impuestos,\n      total,\n      medio_pago: tipo_pago,\n      cantidad_items,\n      items: items_normalized,\n      dedupe_key,\n      cae,\n      vto_cae,\n      validation: {\n        ok,\n        missing_fields: [...new Set(missing_fields)],\n        invalid_fields: [...new Set(invalid_fields)],\n        totals_ok,\n        items_ok,\n        count_ok,\n        message_for_user\n      }\n    }\n  }\n];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -952,7 +952,7 @@
         512
       ],
       "id": "d1d01703-49a4-4aae-9708-f90b4ba7d6f5",
-      "name": "Get row(s) in sheet",
+      "name": "obtener_conversacion",
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "X9RzWqukg9OFpJYv",
@@ -1075,7 +1075,7 @@
         736
       ],
       "id": "314e250a-e318-435c-810b-026e66e0ab41",
-      "name": "Update row in sheet",
+      "name": "actualizar_conv_post_chat",
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "X9RzWqukg9OFpJYv",
@@ -1108,7 +1108,7 @@
         592
       ],
       "id": "7f2e4dc0-57cc-44ca-8aae-798c2c289622",
-      "name": "Get row(s) in sheet4",
+      "name": "obtener_datos_idemp_text",
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "X9RzWqukg9OFpJYv",
@@ -1151,8 +1151,8 @@
     },
     {
       "parameters": {
-        "chatId": "=6677211918",
-        "text": "=Tu rendicion ha sido cargada y enviada, te dejo los datos para que los compruebes:\n\nDescripcion: {{\n  $('Separador por categorias.').isExecuted\n    ? $('Separador por categorias.').first().json.descripcion_general\n    : $('Estan bien los datos?1').first().json.proveedor.nombre\n}}\nImporte total: ${{\n  $('Validador de datos pdf/fotos').isExecuted\n    ? $('Validador de datos pdf/fotos').first().json.total\n    : $('Separador por categorias.').first().json.importe_total\n}}",
+        "chatId": "={{ $('Telegram Trigger').item.json.message.chat.id }}",
+        "text": "=Listo, tu rendicion ha sido cargada y enviada, te dejo los datos para que los compruebes:\n\nDescripcion: {{\n  $('Separador por categorias.').isExecuted\n    ? $('Separador por categorias.').first().json.descripcion_general\n    : $('validacion_datos_pdf_img').first().json.proveedor.nombre\n}}\nImporte total: ${{\n  $('Validador de datos pdf/fotos').isExecuted\n    ? $('Validador de datos pdf/fotos').first().json.total\n    : $('Separador por categorias.').first().json.importe_total\n}}",
         "additionalFields": {
           "appendAttribution": false
         }
@@ -1160,11 +1160,11 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        5360,
+        5104,
         176
       ],
       "id": "227b2f94-3ef1-4b04-b42e-72eac41d4fbe",
-      "name": "Send a text message8",
+      "name": "confirmacion_carga_usuario",
       "webhookId": "971b15f0-59fd-4aa2-a4ce-8726da7eeb91",
       "credentials": {
         "telegramApi": {
@@ -1270,11 +1270,11 @@
       "type": "n8n-nodes-base.googleSheets",
       "typeVersion": 4.7,
       "position": [
-        5360,
-        320
+        5104,
+        400
       ],
       "id": "ea7ebecb-0ce4-4483-886b-1bf4efb6f1cd",
-      "name": "Update row in sheet1",
+      "name": "actualizar_conv_post_envio",
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "X9RzWqukg9OFpJYv",
@@ -1313,7 +1313,7 @@
         976
       ],
       "id": "e646d902-2b12-4152-a755-74dd2aa6067c",
-      "name": "If3"
+      "name": "decision_OK"
     },
     {
       "parameters": {
@@ -1330,7 +1330,7 @@
         1200
       ],
       "id": "7925021e-7472-4377-b034-c8530fb4b565",
-      "name": "Send a text message4",
+      "name": "respuesta_aclaracion",
       "webhookId": "9c687092-410f-4ecd-8815-c24f93070823",
       "credentials": {
         "telegramApi": {
@@ -1356,7 +1356,7 @@
         1120
       ],
       "id": "665b4418-1964-4e46-9d86-59638d7256bd",
-      "name": "OpenAI Chat Model",
+      "name": "modelo_parser_rendicion",
       "credentials": {
         "openAiApi": {
           "id": "1BbfIiWLJauRYf7i",
@@ -1377,7 +1377,7 @@
         976
       ],
       "id": "8ca378ed-e39d-44e3-a13e-e9349a30464f",
-      "name": "AI Agent1"
+      "name": "agente_parser_rendicion"
     },
     {
       "parameters": {
@@ -1481,7 +1481,7 @@
         1200
       ],
       "id": "bea0fd17-d5eb-4497-98e2-2b7aad145aaf",
-      "name": "Update row in sheet2",
+      "name": "actualizar_conv_post_aclaracion",
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "X9RzWqukg9OFpJYv",
@@ -1513,12 +1513,12 @@
         448
       ],
       "id": "e6bfa992-f156-4dbc-b0d8-6d19017aa9c4",
-      "name": "Loop Over Items1"
+      "name": "iterar_items_gasto"
     },
     {
       "parameters": {
         "method": "POST",
-        "url": "=https://restprueba.madelan.com.ar/edp/v1.3/rendicion/{{ $('Crear rendision').item.json.idrendicion }}/item",
+        "url": "=https://restprueba.madelan.com.ar/edp/v1.3/rendicion/{{ $('crear_rendicion').item.json.idrendicion }}/item",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
@@ -1540,7 +1540,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        4032,
+        3776,
         176
       ],
       "id": "aa65b725-3693-4201-8343-b37dfb551b93",
@@ -1564,7 +1564,7 @@
           "conditions": [
             {
               "id": "12c34931-8bc8-4294-8fe5-e1f1f63871a9",
-              "leftValue": "={{ $('If').item.json.normalized_kind }}",
+              "leftValue": "={{ $('tiene_contenido_valido').item.json.normalized_kind }}",
               "rightValue": "manual",
               "operator": {
                 "type": "string",
@@ -1584,40 +1584,6 @@
       ],
       "id": "8a890e4c-24d4-4073-9bd6-23e8cf6a2ac9",
       "name": "es text?"
-    },
-    {
-      "parameters": {
-        "conditions": {
-          "options": {
-            "caseSensitive": true,
-            "leftValue": "",
-            "typeValidation": "strict",
-            "version": 3
-          },
-          "conditions": [
-            {
-              "id": "4f98228d-9e79-40dd-81bb-c05a29040b38",
-              "leftValue": "",
-              "rightValue": "",
-              "operator": {
-                "type": "string",
-                "operation": "equals",
-                "name": "filter.operator.equals"
-              }
-            }
-          ],
-          "combinator": "and"
-        },
-        "options": {}
-      },
-      "type": "n8n-nodes-base.if",
-      "typeVersion": 2.3,
-      "position": [
-        2672,
-        160
-      ],
-      "id": "76073fc4-8581-4c65-92f4-d758ad3e2525",
-      "name": "Estan bien los datos?"
     },
     {
       "parameters": {
@@ -1651,7 +1617,7 @@
         288
       ],
       "id": "382848ae-4927-4783-b29a-834540bd9fb4",
-      "name": "Estan bien los datos?1"
+      "name": "validacion_datos_pdf_img"
     },
     {
       "parameters": {
@@ -1680,20 +1646,20 @@
       "type": "n8n-nodes-base.aggregate",
       "typeVersion": 1,
       "position": [
-        3600,
+        3344,
         384
       ],
       "id": "0a27dd09-1d54-4113-9569-19b1bcf40ee8",
-      "name": "Aggregate1"
+      "name": "agregar_items_con_iva"
     },
     {
       "parameters": {
-        "jsCode": "const itemsArray = $('Estan bien los datos?1').first().json.items ?? [];\n\nreturn itemsArray.map((item, index) => {\n  return {\n    json: {\n      item_numero: index + 1,\n      descripcion: item.descripcion ?? null,\n      cantidad: item.cantidad ?? null,\n      precio_unitario: item.precio_unitario ?? null,\n      total_products: item.total_products ?? null,\n      total: item.total ?? null\n    }\n  };\n});;"
+        "jsCode": "const itemsArray = $('validacion_datos_pdf_img').first().json.items ?? [];\n\nreturn itemsArray.map((item, index) => {\n  return {\n    json: {\n      item_numero: index + 1,\n      descripcion: item.descripcion ?? null,\n      cantidad: item.cantidad ?? null,\n      precio_unitario: item.precio_unitario ?? null,\n      total_products: item.total_products ?? null,\n      total: item.total ?? null\n    }\n  };\n});;"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        3280,
+        3024,
         384
       ],
       "id": "f19712ae-974d-43ff-b99d-9dd4b8c959cf",
@@ -1702,7 +1668,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "=https://restprueba.madelan.com.ar/edp/v1.3/rendicion/{{ $('Crear rendision').item.json.idrendicion }}/item",
+        "url": "=https://restprueba.madelan.com.ar/edp/v1.3/rendicion/{{ $('crear_rendicion').item.json.idrendicion }}/item",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
@@ -1724,7 +1690,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        3920,
+        3680,
         320
       ],
       "id": "e5e2212d-8e56-4ea5-bdf7-4f11c4d433fb",
@@ -1739,7 +1705,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "=https://restprueba.madelan.com.ar/edp/v1.3/rendicion/{{ $('Crear rendision').item.json.idrendicion }}/item",
+        "url": "=https://restprueba.madelan.com.ar/edp/v1.3/rendicion/{{ $('crear_rendicion').item.json.idrendicion }}/item",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
@@ -1761,7 +1727,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        4064,
+        3792,
         480
       ],
       "id": "f7f496e9-1914-4f3c-a4ad-45756ac398ea",
@@ -1801,7 +1767,7 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        3760,
+        3504,
         384
       ],
       "id": "0beebef4-6082-42bf-bb23-7c31bd94b2bf",
@@ -1814,7 +1780,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        3920,
+        3648,
         480
       ],
       "id": "38c66286-5998-4d7a-bde7-d03efa1fe984",
@@ -1847,8 +1813,8 @@
       "type": "n8n-nodes-base.if",
       "typeVersion": 2.3,
       "position": [
-        4496,
-        320
+        4288,
+        400
       ],
       "id": "4699240e-b776-4f24-8e7e-8de0a1f56eb3",
       "name": "se subio?"
@@ -1856,17 +1822,17 @@
     {
       "parameters": {
         "resource": "file",
-        "fileId": "={{ $('Code in JavaScript').item.json.telegram_file_id }}",
+        "fileId": "={{ $('parsear_mensajes_telegram').item.json.telegram_file_id }}",
         "additionalFields": {}
       },
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        4208,
+        3968,
         480
       ],
       "id": "93ff83ac-2850-40cb-9bd7-fef34ebb548d",
-      "name": "Get a file4",
+      "name": "descargar_archivo_items",
       "webhookId": "e54ccc01-ec57-44e3-b4cf-f946acfc516f",
       "credentials": {
         "telegramApi": {
@@ -1878,7 +1844,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "=https://restprueba.madelan.com.ar/edp/v1.3/rendicion/{{ $('Crear rendision').item.json.idrendicion }}/item/{{ $('Subir descripcion pdf/img items').item.json.iditem }}/archivo",
+        "url": "=https://restprueba.madelan.com.ar/edp/v1.3/rendicion/{{ $('crear_rendicion').item.json.idrendicion }}/item/{{ $('Subir descripcion pdf/img items').item.json.iditem }}/archivo",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
@@ -1903,7 +1869,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        4352,
+        4128,
         480
       ],
       "id": "b253d0ea-cf2c-47de-a5e4-6634bfd2bc0b",
@@ -1918,7 +1884,7 @@
     {
       "parameters": {
         "method": "POST",
-        "url": "=https://restprueba.madelan.com.ar/edp/v1.3/rendicion/{{ $('Crear rendision').item.json.idrendicion }}/item/{{ $('Subir descripcion pdf/img item').item.json.iditem }}/archivo",
+        "url": "=https://restprueba.madelan.com.ar/edp/v1.3/rendicion/{{ $('crear_rendicion').item.json.idrendicion }}/item/{{ $('Subir descripcion pdf/img item').item.json.iditem }}/archivo",
         "authentication": "genericCredentialType",
         "genericAuthType": "httpHeaderAuth",
         "sendBody": true,
@@ -1943,7 +1909,7 @@
       "type": "n8n-nodes-base.httpRequest",
       "typeVersion": 4.4,
       "position": [
-        4272,
+        4128,
         320
       ],
       "id": "6797839a-863a-4fea-a748-8ead32a83e03",
@@ -1962,7 +1928,7 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        3440,
+        3184,
         384
       ],
       "id": "00a603cf-16bd-4346-a025-02d3b12036af",
@@ -1975,11 +1941,12 @@
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
       "position": [
-        4864,
+        4672,
         176
       ],
       "id": "ecf99c53-d49a-4d31-ad4c-53c800b4999d",
-      "name": "confirmacion de envio"
+      "name": "confirmacion de envio",
+      "disabled": true
     },
     {
       "parameters": {
@@ -2006,7 +1973,7 @@
         64
       ],
       "id": "da071bc2-f56b-4c7e-8706-a56125a51902",
-      "name": "Get row(s) in sheet5",
+      "name": "obtener_datos_idemp_pdf",
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "X9RzWqukg9OFpJYv",
@@ -2039,7 +2006,7 @@
         224
       ],
       "id": "6228a1b1-40ba-439c-8368-ee82a748c62c",
-      "name": "Get row(s) in sheet6",
+      "name": "obtener_datos_idemp_img",
       "credentials": {
         "googleSheetsOAuth2Api": {
           "id": "X9RzWqukg9OFpJYv",
@@ -2073,7 +2040,7 @@
     },
     {
       "parameters": {
-        "jsCode": "const nueva = $('Normalize Extracted Image Data').first().json;\n\n// Helpers\n//const onlyDigits = (v) => {\n//  if (v === undefined || v === null) return '';\n//  return String(v).replace(/\\D/g, '');\n//};\n\nconst normalizeNumber = (v) => {\n  if (v === undefined || v === null || v === '') return '';\n  const n = Number(String(v).replace(',', '.').trim());\n  return Number.isFinite(n) ? n.toFixed(2) : '';\n};\n\nconst normalizeFactura = (v) => {\n  if (v === undefined || v === null) return '';\n  const digits = String(v).replace(/\\D/g, '');\n  if (!digits) return '';\n  \n  // nos quedamos con los últimos 8 dígitos del nro de factura\n  // ej: C006-00003018 -> 00003018\n  return digits.slice(-8);\n};\n\nconst nueva_rendicion = {\n  numero_factura: normalizeFactura(nueva.numero_factura),\n  total: normalizeNumber(nueva.total),\n};\n\nconst rendiciones_existentes = $input.all();\n\nlet duplicado = false;\nlet match = null;\n\nfor (const item of rendiciones_existentes) {\n  const r = item.json;\n\n  const existente = {\n    numero_factura: normalizeFactura(r[\"Nº Factura\"]),\n    total: normalizeNumber(r[\"Total\"]),\n  };\n\n  if (\n\n    existente.numero_factura === nueva_rendicion.numero_factura &&\n    existente.total === nueva_rendicion.total\n  ) {\n    duplicado = true;\n    match = r;\n    break;\n  }\n}\n\nreturn [\n  {\n    json: {\n      duplicate: duplicado,\n      nueva_rendicion,\n      match,\n    }\n  }\n];"
+        "jsCode": "const nueva = $('Normalize Extracted Image Data').first().json;\n\nconst normalizeNumber = (v) => {\n  if (v === undefined || v === null || v === '') return '';\n  const n = Number(String(v).replace(',', '.').trim());\n  return Number.isFinite(n) ? n.toFixed(2) : '';\n};\n\nconst normalizeFactura = (v) => {\n  if (v === undefined || v === null) return '';\n  const digits = String(v).replace(/\\D/g, '');\n  if (!digits) return '';\n  \n  return digits.slice(-8);\n};\n\nconst nueva_rendicion = {\n  numero_factura: normalizeFactura(nueva.numero_factura),\n  total: normalizeNumber(nueva.total),\n};\n\nconst rendiciones_existentes = $input.all();\n\nlet duplicado = false;\nlet match = null;\n\nfor (const item of rendiciones_existentes) {\n  const r = item.json;\n\n  const existente = {\n    numero_factura: normalizeFactura(r[\"Nº Factura\"]),\n    total: normalizeNumber(r[\"Total\"]),\n  };\n\n  if (\n\n    existente.numero_factura === nueva_rendicion.numero_factura &&\n    existente.total === nueva_rendicion.total\n  ) {\n    duplicado = true;\n    match = r;\n    break;\n  }\n}\n\nreturn [\n  {\n    json: {\n      duplicate: duplicado,\n      nueva_rendicion,\n      match,\n    }\n  }\n];"
       },
       "type": "n8n-nodes-base.code",
       "typeVersion": 2,
@@ -2108,8 +2075,8 @@
       "type": "n8n-nodes-base.telegram",
       "typeVersion": 1.2,
       "position": [
-        2928,
-        416
+        2496,
+        432
       ],
       "id": "902f4fc8-88f7-45fd-acba-e14195aa802e",
       "name": "Comprueba que todos los datos",
@@ -2201,215 +2168,46 @@
     }
   ],
   "connections": {
-    "Switch": {
+    "agente_chat": {
       "main": [
         [
           {
-            "node": "Get a file3",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Get a file",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "normalizar texto",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "No Operation, do nothing1",
-            "type": "main",
-            "index": 0
+            "index": 0,
+            "node": "respuesta_chat",
+            "type": "main"
           }
         ]
       ]
     },
-    "Messages?": {
+    "agente_parser_rendicion": {
       "main": [
         [
           {
-            "node": "Code in JavaScript",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "No Operation, do nothing",
-            "type": "main",
-            "index": 0
+            "index": 0,
+            "node": "Normalize Extracted Text Data",
+            "type": "main"
           }
         ]
       ]
     },
-    "Normalizacion": {
+    "agregar_rendiciones": {
       "main": [
         [
           {
-            "node": "Messages?",
-            "type": "main",
-            "index": 0
+            "index": 0,
+            "node": "resumen_rendiciones",
+            "type": "main"
           }
         ]
       ]
     },
-    "Code in JavaScript": {
+    "agregar_items_con_iva": {
       "main": [
         [
           {
-            "node": "If",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Normalize Extracted PDF Data": {
-      "main": [
-        [
-          {
-            "node": "Get row(s) in sheet5",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Normalize Extracted Image Data": {
-      "main": [
-        [
-          {
-            "node": "Get row(s) in sheet6",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Telegram Trigger": {
-      "main": [
-        [
-          {
-            "node": "Normalizacion",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Send a text message": {
-      "main": [
-        []
-      ]
-    },
-    "Get a file": {
-      "main": [
-        [
-          {
-            "node": "Analyze image",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Get a file2": {
-      "main": [
-        [
-          {
-            "node": "Subir File Item",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "hay un file?": {
-      "main": [
-        [
-          {
-            "node": "Subir descripcion text",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Normalize Items",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Get row(s) in sheet1": {
-      "main": [
-        [
-          {
-            "node": "Loop Over Items",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Send a text message6": {
-      "main": [
-        []
-      ]
-    },
-    "If": {
-      "main": [
-        [
-          {
-            "node": "Get row(s) in sheet1",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Send a text message",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "If2": {
-      "main": [
-        [
-          {
-            "node": "Switch",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Loop Over Items",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Get a file3": {
-      "main": [
-        [
-          {
-            "node": "Extract from File",
-            "type": "main",
-            "index": 0
+            "index": 0,
+            "node": "item o items?",
+            "type": "main"
           }
         ]
       ]
@@ -2418,495 +2216,224 @@
       "main": [
         [
           {
+            "index": 0,
             "node": "Normalize Extracted Image Data",
-            "type": "main",
-            "index": 0
+            "type": "main"
           }
         ]
       ]
     },
-    "Send a text message5": {
+    "parsear_mensajes_telegram": {
       "main": [
-        []
+        [
+          {
+            "index": 0,
+            "node": "tiene_contenido_valido",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "crear_rendicion": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "hay un file?",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "enviar_rendicion": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "confirmacion de envio",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "validacion_datos_pdf_img": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "crear_rendicion",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Comprueba que todos los datos",
+            "type": "main"
+          }
+        ]
       ]
     },
     "Extract from File": {
       "main": [
         [
           {
+            "index": 0,
             "node": "Normalize Extracted PDF Data",
-            "type": "main",
-            "index": 0
+            "type": "main"
           }
         ]
       ]
     },
-    "Loop Over Items": {
+    "descargar_imagen": {
       "main": [
         [
           {
-            "node": "Aggregate",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "If2",
-            "type": "main",
-            "index": 0
+            "index": 0,
+            "node": "Analyze image",
+            "type": "main"
           }
         ]
       ]
     },
-    "Aggregate": {
+    "descargar_archivo_item": {
       "main": [
         [
           {
-            "node": "Send a text message6",
-            "type": "main",
-            "index": 0
+            "index": 0,
+            "node": "Subir File Item",
+            "type": "main"
           }
         ]
       ]
     },
-    "Crear rendision": {
+    "descargar_pdf": {
       "main": [
         [
           {
-            "node": "hay un file?",
-            "type": "main",
-            "index": 0
+            "index": 0,
+            "node": "Extract from File",
+            "type": "main"
           }
         ]
       ]
     },
-    "Enviar Rendision": {
+    "descargar_archivo_items": {
       "main": [
         [
           {
-            "node": "confirmacion de envio",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "idempotencia text code": {
-      "main": [
-        [
-          {
-            "node": "idempotencia text",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "OpenAI Chat Model1": {
-      "ai_languageModel": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "ai_languageModel",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "AI Agent": {
-      "main": [
-        [
-          {
-            "node": "Send a text message1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "normalizar texto": {
-      "main": [
-        [
-          {
-            "node": "clasificar intención",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "clasificar intención": {
-      "main": [
-        [
-          {
-            "node": "chat o rendicion?",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Validador de datos pdf/fotos": {
-      "main": [
-        [
-          {
-            "node": "Estan bien los datos?1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Get row(s) in sheet": {
-      "main": [
-        [
-          {
-            "node": "new conversation?",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "new conversation?": {
-      "main": [
-        [
-          {
-            "node": "AI Agent",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Send a text message1": {
-      "main": [
-        [
-          {
-            "node": "Update row in sheet",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Get row(s) in sheet4": {
-      "main": [
-        [
-          {
-            "node": "idempotencia text code",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "chat o rendicion?": {
-      "main": [
-        [
-          {
-            "node": "Get row(s) in sheet",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "AI Agent1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Send a text message8": {
-      "main": [
-        [
-          {
-            "node": "Update row in sheet1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "If3": {
-      "main": [
-        [
-          {
-            "node": "Separador por categorias.",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Send a text message4",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "AI Agent1": {
-      "main": [
-        [
-          {
-            "node": "Normalize Extracted Text Data",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "OpenAI Chat Model": {
-      "ai_languageModel": [
-        [
-          {
-            "node": "AI Agent1",
-            "type": "ai_languageModel",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Send a text message4": {
-      "main": [
-        [
-          {
-            "node": "Update row in sheet2",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Normalize Extracted Text Data": {
-      "main": [
-        [
-          {
-            "node": "If3",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Loop Over Items1": {
-      "main": [
-        [
-          {
-            "node": "es text?",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Get row(s) in sheet4",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Subir descripcion text": {
-      "main": [
-        [
-          {
-            "node": "Enviar Rendision",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "es text?": {
-      "main": [
-        [
-          {
-            "node": "Estan bien los datos?",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Validador de datos pdf/fotos",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Estan bien los datos?1": {
-      "main": [
-        [
-          {
-            "node": "Crear rendision",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Comprueba que todos los datos",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Estan bien los datos?": {
-      "main": [
-        [
-          {
-            "node": "Crear rendision",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Comprueba que todos los datos",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Separador por categorias.": {
-      "main": [
-        [
-          {
-            "node": "Loop Over Items1",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Aggregate1": {
-      "main": [
-        [
-          {
-            "node": "item o items?",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Normalize Items": {
-      "main": [
-        [
-          {
-            "node": "Iva agregado",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Subir descripcion pdf/img item": {
-      "main": [
-        [
-          {
-            "node": "Get a file2",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Subir descripcion pdf/img items": {
-      "main": [
-        [
-          {
-            "node": "Get a file4",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "item o items?": {
-      "main": [
-        [
-          {
-            "node": "Subir descripcion pdf/img item",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Reconstruccion Normalize Items",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Reconstruccion Normalize Items": {
-      "main": [
-        [
-          {
-            "node": "Subir descripcion pdf/img items",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "se subio?": {
-      "main": [
-        [
-          {
-            "node": "Enviar Rendision",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Send a text message5",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "Get a file4": {
-      "main": [
-        [
-          {
+            "index": 0,
             "node": "Subir File Items",
-            "type": "main",
-            "index": 0
+            "type": "main"
           }
         ]
       ]
     },
-    "Subir File Item": {
+    "obtener_conversacion": {
       "main": [
         [
           {
-            "node": "se subio?",
-            "type": "main",
-            "index": 0
+            "index": 0,
+            "node": "new conversation?",
+            "type": "main"
           }
         ]
       ]
     },
-    "Subir File Items": {
+    "obtener_rendiciones_pendientes": {
       "main": [
         [
           {
-            "node": "se subio?",
-            "type": "main",
-            "index": 0
+            "index": 0,
+            "node": "iterar_rendiciones",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "obtener_datos_idemp_text": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "idempotencia text code",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "obtener_datos_idemp_pdf": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "idempotencia pdf code",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "obtener_datos_idemp_img": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "idempotencia img code",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "tiene_contenido_valido": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "obtener_rendiciones_pendientes",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "respuesta_rechazo",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "es_del_usuario": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Switch",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "iterar_rendiciones",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "decision_OK": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Separador por categorias.",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "respuesta_aclaracion",
+            "type": "main"
           }
         ]
       ]
@@ -2915,9 +2442,348 @@
       "main": [
         [
           {
-            "node": "Aggregate1",
-            "type": "main",
-            "index": 0
+            "index": 0,
+            "node": "agregar_items_con_iva",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "iterar_rendiciones": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "agregar_rendiciones",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "es_del_usuario",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "iterar_items_gasto": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "es text?",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "obtener_datos_idemp_text",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Messages?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "parsear_mensajes_telegram",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "descarte_sin_mensajes",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Normalizacion": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Messages?",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Normalize Extracted Image Data": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "obtener_datos_idemp_img",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Normalize Extracted PDF Data": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "obtener_datos_idemp_pdf",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Normalize Extracted Text Data": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "decision_OK",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Normalize Items": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Iva agregado",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "modelo_parser_rendicion": {
+      "ai_languageModel": [
+        [
+          {
+            "index": 0,
+            "node": "agente_parser_rendicion",
+            "type": "ai_languageModel"
+          }
+        ]
+      ]
+    },
+    "modelo_chat_conversacional": {
+      "ai_languageModel": [
+        [
+          {
+            "index": 0,
+            "node": "agente_chat",
+            "type": "ai_languageModel"
+          }
+        ]
+      ]
+    },
+    "Reconstruccion Normalize Items": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Subir descripcion pdf/img items",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "respuesta_rechazo": {
+      "main": [
+        []
+      ]
+    },
+    "respuesta_chat": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "actualizar_conv_post_chat",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "respuesta_aclaracion": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "actualizar_conv_post_aclaracion",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "error_subida_archivo": {
+      "main": [
+        []
+      ]
+    },
+    "resumen_rendiciones": {
+      "main": [
+        []
+      ]
+    },
+    "confirmacion_carga_usuario": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "actualizar_conv_post_envio",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Separador por categorias.": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "iterar_items_gasto",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Subir File Item": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "se subio?",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Subir File Items": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "se subio?",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Subir descripcion pdf/img item": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "descargar_archivo_item",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Subir descripcion pdf/img items": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "descargar_archivo_items",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Subir descripcion text": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "enviar_rendicion",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "descargar_pdf",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "descargar_imagen",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "normalizar texto",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "descarte_tipo_desconocido",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Telegram Trigger": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Normalizacion",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "Validador de datos pdf/fotos": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "validacion_datos_pdf_img",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "chat o rendicion?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "obtener_conversacion",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "agente_parser_rendicion",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "clasificar intención": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "chat o rendicion?",
+            "type": "main"
           }
         ]
       ]
@@ -2926,47 +2792,56 @@
       "main": [
         [
           {
-            "node": "Send a text message8",
-            "type": "main",
-            "index": 0
+            "index": 0,
+            "node": "confirmacion_carga_usuario",
+            "type": "main"
           }
         ]
       ]
     },
-    "Get row(s) in sheet5": {
+    "es text?": {
       "main": [
         [
           {
-            "node": "idempotencia pdf code",
+            "node": "crear_rendicion",
             "type": "main",
             "index": 0
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Validador de datos pdf/fotos",
+            "type": "main"
           }
         ]
       ]
     },
-    "Get row(s) in sheet6": {
+    "hay un file?": {
       "main": [
         [
           {
-            "node": "idempotencia img code",
-            "type": "main",
-            "index": 0
+            "index": 0,
+            "node": "Subir descripcion text",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Normalize Items",
+            "type": "main"
           }
         ]
-      ]
-    },
-    "ya fue cargada": {
-      "main": [
-        []
       ]
     },
     "idempotencia img code": {
       "main": [
         [
           {
+            "index": 0,
             "node": "idempotencia pdf/img",
-            "type": "main",
-            "index": 0
+            "type": "main"
           }
         ]
       ]
@@ -2975,27 +2850,9 @@
       "main": [
         [
           {
+            "index": 0,
             "node": "idempotencia pdf/img",
-            "type": "main",
-            "index": 0
-          }
-        ]
-      ]
-    },
-    "idempotencia text": {
-      "main": [
-        [
-          {
-            "node": "ya fue cargada",
-            "type": "main",
-            "index": 0
-          }
-        ],
-        [
-          {
-            "node": "Loop Over Items1",
-            "type": "main",
-            "index": 0
+            "type": "main"
           }
         ]
       ]
@@ -3004,18 +2861,110 @@
       "main": [
         [
           {
+            "index": 0,
             "node": "es text?",
-            "type": "main",
-            "index": 0
+            "type": "main"
           }
         ],
         [
           {
+            "index": 0,
             "node": "ya fue cargada",
-            "type": "main",
-            "index": 0
+            "type": "main"
           }
         ]
+      ]
+    },
+    "idempotencia text": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "ya fue cargada",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "iterar_items_gasto",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "idempotencia text code": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "idempotencia text",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "item o items?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "Subir descripcion pdf/img item",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "Reconstruccion Normalize Items",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "new conversation?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "agente_chat",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "normalizar texto": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "clasificar intención",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "se subio?": {
+      "main": [
+        [
+          {
+            "index": 0,
+            "node": "enviar_rendicion",
+            "type": "main"
+          }
+        ],
+        [
+          {
+            "index": 0,
+            "node": "error_subida_archivo",
+            "type": "main"
+          }
+        ]
+      ]
+    },
+    "ya fue cargada": {
+      "main": [
+        []
       ]
     }
   },
@@ -3030,54 +2979,10 @@
   "meta": {
     "templateCredsSetupCompleted": true
   },
-  "pinData": {
-    "Analyze image": [
-      {
-        "json": {
-          "id": "chatcmpl-DMGN9znTrtzSlAZ8M3pSBgak4IKjj",
-          "object": "chat.completion",
-          "created": 1774198523,
-          "model": "gpt-4o-mini-2024-07-18",
-          "choices": [
-            {
-              "index": 0,
-              "message": {
-                "role": "assistant",
-                "content": "```json\n{\n  \"tipo_comprobante\": \"factura\",\n  \"tipo_factura\": \"A\",\n  \"numero_factura\": \"0006-000003018\",\n  \"fecha\": \"2025-08-20\",\n  \n  \"proveedor\": {\n    \"nombre\": \"LISOTTO SANITARIOS\",\n    \"cuit\": null,\n    \"direccion\": \"GUEMES 4045/49\"\n  },\n  \n  \"cliente\": {\n    \"nombre\": \"GONZALEZ DIEGO\",\n    \"cuit_dni\": \"20-28505423\"\n  },\n  \n  \"moneda\": \"ARS\",\n  \n  \"subtotal\": 23721.23,\n  \"iva\": 4981.46,\n  \"otros_impuestos\": null,\n  \"total\": 28702.69,\n  \n  \"medio_pago\": \"efectivo\",\n  \n  \"items\": [\n    {\n      \"descripcion\": \"Mochila Agua DUA Dealer Citroen C3 - CANOZO\",\n      \"cantidad\": 1,\n      \"precio_unitario\": 20751.99,\n      \"total\": 20751.99\n    },\n    {\n      \"descripcion\": \"Buje Red 3/8\\\" BCE\",\n      \"cantidad\": 1,\n      \"precio_unitario\": 1514.70,\n      \"total\": 1514.70\n    },\n    {\n      \"descripcion\": \"Repuesto 1\",\n      \"cantidad\": 1,\n      \"precio_unitario\": 1454.54,\n      \"total\": 1454.54\n    }\n  ],\n  \n  \"confianza_importes\": \"alta\",\n  \"requiere_revision\": false,\n  \"motivo_revision\": null\n}\n```",
-                "refusal": null,
-                "annotations": []
-              },
-              "logprobs": null,
-              "finish_reason": "stop"
-            }
-          ],
-          "usage": {
-            "prompt_tokens": 26884,
-            "completion_tokens": 368,
-            "total_tokens": 27252,
-            "prompt_tokens_details": {
-              "cached_tokens": 0,
-              "audio_tokens": 0
-            },
-            "completion_tokens_details": {
-              "reasoning_tokens": 0,
-              "audio_tokens": 0,
-              "accepted_prediction_tokens": 0,
-              "rejected_prediction_tokens": 0
-            }
-          },
-          "service_tier": "default",
-          "system_fingerprint": "fp_476b124e6d"
-        },
-        "pairedItem": {
-          "item": 0
-        }
-      }
-    ]
-  },
-  "versionId": "4260b33a-dbf9-4e23-a740-52c054d6f56b",
+  "pinData": {},
+  "versionId": "ffdf9695-eb8d-4016-9a4e-89775110fc57",
   "activeVersionId": null,
-  "versionCounter": 3388,
+  "versionCounter": 3422,
   "triggerCount": 0,
   "shared": [
     {

@@ -79,7 +79,7 @@ const RENAMES = {
   'Enviar Rendision': 'enviar_rendicion',
 
   // ── Validaciones duplicadas → nombres claros ──
-  'Estan bien los datos?':  'validacion_datos_text',
+  // 'Estan bien los datos?' fue eliminado del workflow (validacion_datos_text ya no existe)
   'Estan bien los datos?1': 'validacion_datos_pdf_img',
 };
 
