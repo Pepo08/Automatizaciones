@@ -79,3 +79,22 @@ Cuando se trabaje con un workflow:
 - sin relleno
 - enfocada en impacto real
 - con pasos accionables
+
+## Skills de n8n (referencia obligatoria al generar workflows)
+
+Las siguientes guías están en `skills/` y DEBEN consultarse al generar cualquier workflow de n8n:
+
+1. `skills/n8n-workflow-generator-checklist.md` — Proceso obligatorio paso a paso
+2. `skills/n8n-workflow-architecture.md` — Cuántos workflows, cuándo subflows
+3. `skills/n8n-data-flow-engine.md` — Cómo fluyen los items entre nodos
+4. `skills/n8n-connection-rules.md` — Reglas de conexión, fan-in requiere Merge
+5. `skills/n8n-merge-patterns.md` — Modos del Merge v3
+6. `skills/n8n-json-structure.md` — Formato JSON + typeVersions de esta instancia
+7. `skills/n8n-sticky-notes-layout.md` — Organización visual
+8. `skills/n8n-subflow-design.md` — Patrones de Execute Workflow
+
+**Regla crítica de esta instancia n8n:**
+- Google Sheets v4.7, IF v2.3, Switch v3.3 (requieren typeValidation/version)
+- NO incluir credentials vacías (crashean el editor)
+- Máximo 3 conexiones entrantes a un nodo
+- reply_markup de Telegram como STRING (JSON.stringify), no objeto anidado

@@ -1,0 +1,658 @@
+{
+  "name": "CRM Scoring - Lead Classification & Mailchimp Sync",
+  "nodes": [
+    {
+      "parameters": {},
+      "id": "d1a0b1c2-0001-4000-a000-000000000001",
+      "name": "Inicio Manual",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        220,
+        280
+      ]
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "hours",
+              "hoursInterval": 6
+            }
+          ]
+        }
+      },
+      "id": "d1a0b1c2-0001-4000-a000-000000000002",
+      "name": "Trigger Programado",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        220,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "read",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "options": {}
+      },
+      "id": "d1a0b1c2-0001-4000-a000-000000000003",
+      "name": "Leer Contactos",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        460,
+        380
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// NORMALIZAR DATOS DE CONTACTOS\n// ============================================\n// Mapea columnas ES/EN, limpia y valida datos.\n// El mapeo de columnas viene de config/mapping.json.\n// Si se necesita agregar sinónimos, editar COLUMN_MAP.\n// ============================================\n\nconst COLUMN_MAP = {\n  'email': 'email',\n  'correo': 'email',\n  'e-mail': 'email',\n  'correo electrónico': 'email',\n  'correo electronico': 'email',\n  'nombre': 'nombre',\n  'fname': 'nombre',\n  'first name': 'nombre',\n  'first_name': 'nombre',\n  'primer nombre': 'nombre',\n  'apellido': 'apellido',\n  'lname': 'apellido',\n  'last name': 'apellido',\n  'last_name': 'apellido',\n  'telefono': 'telefono',\n  'teléfono': 'telefono',\n  'phone': 'telefono',\n  'tel': 'telefono',\n  'celular': 'telefono',\n  'móvil': 'telefono',\n  'movil': 'telefono',\n  'empresa': 'empresa',\n  'company': 'empresa',\n  'organización': 'empresa',\n  'organizacion': 'empresa',\n  'organization': 'empresa',\n  'cargo': 'cargo',\n  'puesto': 'cargo',\n  'position': 'cargo',\n  'job title': 'cargo',\n  'job_title': 'cargo',\n  'title': 'cargo',\n  'rol': 'cargo',\n  'origen': 'origen',\n  'source': 'origen',\n  'fuente': 'origen',\n  'canal': 'origen',\n  'ultimo contacto': 'ultimo_contacto',\n  'último contacto': 'ultimo_contacto',\n  'last contact': 'ultimo_contacto',\n  'last_contact': 'ultimo_contacto',\n  'fecha contacto': 'ultimo_contacto',\n  'fecha_contacto': 'ultimo_contacto',\n  'interacciones': 'interacciones',\n  'interactions': 'interacciones',\n  'contactos': 'interacciones',\n  'touches': 'interacciones',\n  'estado': 'estado',\n  'status': 'estado',\n  'activo': 'estado',\n  'notas': 'notas',\n  'notes': 'notas',\n  'comentarios': 'notas',\n  'observaciones': 'notas'\n};\n\nconst ESTADO_ACTIVO = ['activo', 'active', 'si', 'sí', 'yes', '1', 'true'];\n\nfunction capitalize(str) {\n  if (!str) return '';\n  return str.charAt(0).toUpperCase() + str.slice(1).toLowerCase();\n}\n\nfunction parseDate(val) {\n  if (!val) return null;\n  const d = new Date(val);\n  return isNaN(d.getTime()) ? null : d.toISOString();\n}\n\nfunction cleanPhone(val) {\n  if (!val) return '';\n  return String(val).replace(/[^0-9+\\-\\s()]/g, '').trim();\n}\n\nconst results = [];\n\nfor (const item of $input.all()) {\n  const raw = item.json;\n  const normalized = {};\n\n  // Mapear columnas dinámicamente\n  for (const [key, value] of Object.entries(raw)) {\n    const normalizedKey = key.toLowerCase().trim();\n    const mappedKey = COLUMN_MAP[normalizedKey];\n    if (mappedKey) {\n      normalized[mappedKey] = typeof value === 'string' ? value.trim() : value;\n    }\n  }\n\n  // Validar email (campo obligatorio)\n  normalized.email = (normalized.email || '').toLowerCase().trim();\n  if (!normalized.email || !normalized.email.includes('@')) {\n    normalized._valid = false;\n    normalized._motivo_descarte = 'Email inválido o vacío';\n  } else {\n    normalized._valid = true;\n  }\n\n  // Limpiar nombre y apellido\n  normalized.nombre = capitalize(normalized.nombre || '');\n  normalized.apellido = capitalize(normalized.apellido || '');\n\n  // Limpiar teléfono\n  normalized.telefono = cleanPhone(normalized.telefono);\n\n  // Normalizar estado\n  const estado = (normalized.estado || '').toLowerCase().trim();\n  normalized.estado = ESTADO_ACTIVO.includes(estado) ? 'activo' : 'inactivo';\n\n  // Parsear interacciones a número\n  normalized.interacciones = parseInt(normalized.interacciones) || 0;\n\n  // Normalizar origen\n  normalized.origen = (normalized.origen || 'desconocido').toLowerCase().trim();\n\n  // Parsear fecha de último contacto\n  normalized.ultimo_contacto = parseDate(normalized.ultimo_contacto);\n\n  // Normalizar cargo\n  normalized.cargo = (normalized.cargo || '').toLowerCase().trim();\n\n  // Empresa\n  normalized.empresa = (normalized.empresa || '').trim();\n\n  // Notas\n  normalized.notas = (normalized.notas || '').trim();\n\n  // Índice para referencia en Sheet update\n  normalized._row_number = item.json.row_number || (results.length + 2);\n\n  results.push({ json: normalized });\n}\n\nreturn results;"
+      },
+      "id": "d1a0b1c2-0001-4000-a000-000000000004",
+      "name": "Normalizar Datos",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        700,
+        380
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// CALCULAR SCORE DE CADA CONTACTO\n// ============================================\n// Sistema de scoring modular y editable.\n// Para modificar reglas: editar las constantes.\n// Para agregar criterios: agregar bloque nuevo.\n// ============================================\n\n// --- REGLAS DE SCORING (EDITAR AQUÍ) ---\nconst RULES = {\n  recencia: { dias_7: 30, dias_14: 20, dias_30: 10, dias_60: 5, mas_60: 0 },\n  interacciones: { mas_de_5: 25, entre_3_y_5: 20, entre_1_y_2: 10, ninguna: 0 },\n  origen: {\n    referido: 15, evento: 12, web: 8,\n    'red social': 6, linkedin: 6, otro: 3, desconocido: 0\n  },\n  cargo: { alto: 15, medio: 10, bajo: 5, sin_dato: 0 },\n  penalizaciones: {\n    inactivo: -20, sin_telefono: -10,\n    sin_empresa: -5, sin_nombre: -5\n  }\n};\n\n// --- CARGOS POR NIVEL ---\nconst CARGOS_ALTO = [\n  'dueño', 'dueña', 'director', 'directora', 'ceo',\n  'gerente general', 'fundador', 'fundadora', 'owner',\n  'presidente', 'presidenta', 'socio', 'socia', 'cto', 'cfo', 'coo'\n];\nconst CARGOS_MEDIO = [\n  'gerente', 'jefe', 'jefa', 'responsable',\n  'encargado', 'encargada', 'manager', 'lead',\n  'head', 'supervisor', 'supervisora'\n];\nconst CARGOS_BAJO = [\n  'coordinador', 'coordinadora', 'analista', 'asistente',\n  'ejecutivo', 'ejecutiva', 'vendedor', 'vendedora',\n  'asesor', 'asesora'\n];\n\nconst now = new Date();\nconst results = [];\n\nfor (const item of $input.all()) {\n  const c = item.json;\n\n  // Contactos inválidos → score 0\n  if (!c._valid) {\n    results.push({\n      json: {\n        ...c,\n        score: 0,\n        score_detalle: { motivo: c._motivo_descarte }\n      }\n    });\n    continue;\n  }\n\n  let score = 0;\n  const detalle = {};\n\n  // 1. RECENCIA\n  if (c.ultimo_contacto) {\n    const diffDays = Math.floor(\n      (now - new Date(c.ultimo_contacto)) / (1000 * 60 * 60 * 24)\n    );\n    if (diffDays <= 7) {\n      score += RULES.recencia.dias_7;\n      detalle.recencia = `+${RULES.recencia.dias_7} (${diffDays}d)`;\n    } else if (diffDays <= 14) {\n      score += RULES.recencia.dias_14;\n      detalle.recencia = `+${RULES.recencia.dias_14} (${diffDays}d)`;\n    } else if (diffDays <= 30) {\n      score += RULES.recencia.dias_30;\n      detalle.recencia = `+${RULES.recencia.dias_30} (${diffDays}d)`;\n    } else if (diffDays <= 60) {\n      score += RULES.recencia.dias_60;\n      detalle.recencia = `+${RULES.recencia.dias_60} (${diffDays}d)`;\n    } else {\n      detalle.recencia = `+0 (${diffDays}d - antiguo)`;\n    }\n  } else {\n    detalle.recencia = '+0 (sin fecha)';\n  }\n\n  // 2. INTERACCIONES\n  const inter = c.interacciones;\n  if (inter > 5) {\n    score += RULES.interacciones.mas_de_5;\n    detalle.interacciones = `+${RULES.interacciones.mas_de_5} (${inter})`;\n  } else if (inter >= 3) {\n    score += RULES.interacciones.entre_3_y_5;\n    detalle.interacciones = `+${RULES.interacciones.entre_3_y_5} (${inter})`;\n  } else if (inter >= 1) {\n    score += RULES.interacciones.entre_1_y_2;\n    detalle.interacciones = `+${RULES.interacciones.entre_1_y_2} (${inter})`;\n  } else {\n    detalle.interacciones = '+0 (sin interacciones)';\n  }\n\n  // 3. ORIGEN\n  const origenScore = RULES.origen[c.origen] ?? RULES.origen.otro;\n  score += origenScore;\n  detalle.origen = `+${origenScore} (${c.origen})`;\n\n  // 4. CARGO\n  const cargo = c.cargo;\n  if (CARGOS_ALTO.some(t => cargo.includes(t))) {\n    score += RULES.cargo.alto;\n    detalle.cargo = `+${RULES.cargo.alto} (alto: ${cargo})`;\n  } else if (CARGOS_MEDIO.some(t => cargo.includes(t))) {\n    score += RULES.cargo.medio;\n    detalle.cargo = `+${RULES.cargo.medio} (medio: ${cargo})`;\n  } else if (CARGOS_BAJO.some(t => cargo.includes(t))) {\n    score += RULES.cargo.bajo;\n    detalle.cargo = `+${RULES.cargo.bajo} (bajo: ${cargo})`;\n  } else {\n    detalle.cargo = '+0 (no clasificado)';\n  }\n\n  // 5. PENALIZACIONES\n  if (c.estado === 'inactivo') {\n    score += RULES.penalizaciones.inactivo;\n    detalle.pen_estado = `${RULES.penalizaciones.inactivo} (inactivo)`;\n  }\n  if (!c.telefono) {\n    score += RULES.penalizaciones.sin_telefono;\n    detalle.pen_telefono = `${RULES.penalizaciones.sin_telefono} (sin tel)`;\n  }\n  if (!c.empresa) {\n    score += RULES.penalizaciones.sin_empresa;\n    detalle.pen_empresa = `${RULES.penalizaciones.sin_empresa} (sin empresa)`;\n  }\n  if (!c.nombre) {\n    score += RULES.penalizaciones.sin_nombre;\n    detalle.pen_nombre = `${RULES.penalizaciones.sin_nombre} (sin nombre)`;\n  }\n\n  // Score mínimo 0\n  score = Math.max(0, score);\n\n  results.push({\n    json: { ...c, score, score_detalle: detalle }\n  });\n}\n\nreturn results;"
+      },
+      "id": "d1a0b1c2-0001-4000-a000-000000000005",
+      "name": "Calcular Score",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        940,
+        380
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// CLASIFICAR LEADS POR SCORE\n// ============================================\n// Asigna categoría y label basado en umbrales.\n// Para ajustar umbrales, editar THRESHOLDS.\n// ============================================\n\nconst THRESHOLDS = {\n  HOT: 60,\n  WARM: 35,\n  COLD: 15\n};\n\nconst now = new Date().toISOString();\nconst results = [];\n\nfor (const item of $input.all()) {\n  const c = item.json;\n  const score = c.score || 0;\n\n  let score_label, categoria;\n\n  if (!c._valid) {\n    score_label = 'NONE';\n    categoria = 'DESCARTADO';\n  } else if (score >= THRESHOLDS.HOT) {\n    score_label = 'HIGH';\n    categoria = 'HOT';\n  } else if (score >= THRESHOLDS.WARM) {\n    score_label = 'MEDIUM';\n    categoria = 'WARM';\n  } else if (score >= THRESHOLDS.COLD) {\n    score_label = 'LOW';\n    categoria = 'COLD';\n  } else {\n    score_label = 'NONE';\n    categoria = 'DESCARTADO';\n  }\n\n  results.push({\n    json: {\n      ...c,\n      score_label,\n      categoria,\n      fecha_procesamiento: now\n    }\n  });\n}\n\nreturn results;"
+      },
+      "id": "d1a0b1c2-0001-4000-a000-000000000006",
+      "name": "Clasificar Leads",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1180,
+        380
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "member",
+        "operation": "getAll",
+        "list": "={{ $json.list_id || '' }}",
+        "returnAll": true
+      },
+      "id": "d1a0b1c2-0001-4000-a000-000000000007",
+      "name": "Obtener Miembros Mailchimp",
+      "type": "n8n-nodes-base.mailchimp",
+      "typeVersion": 1,
+      "position": [
+        1420,
+        380
+      ],
+      "credentials": {
+        "mailchimpApi": {
+          "id": "",
+          "name": "Mailchimp"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// COMPARAR CONTACTOS CON MAILCHIMP\n// ============================================\n// Determina acción por contacto:\n// - 'crear': no existe en Mailchimp\n// - 'actualizar': existe pero tiene cambios\n// - 'ignorar': existe sin cambios o descartado\n// ============================================\n\n// Miembros actuales de Mailchimp (input directo)\nconst mcMembers = $input.all();\n\n// Contactos clasificados (del nodo anterior via referencia)\nconst contacts = $('Clasificar Leads').all();\n\n// Lookup por email\nconst mcLookup = {};\nfor (const m of mcMembers) {\n  const email = (m.json.email_address || '').toLowerCase();\n  if (email) {\n    mcLookup[email] = {\n      status: m.json.status,\n      merge_fields: m.json.merge_fields || {},\n      tags: (m.json.tags || []).map(t => t.name || t),\n      id: m.json.id\n    };\n  }\n}\n\nfunction hasChanges(contact, mc) {\n  // Comparar merge fields clave\n  if ((mc.merge_fields.FNAME || '') !== contact.nombre) return true;\n  if ((mc.merge_fields.LNAME || '') !== contact.apellido) return true;\n  if ((mc.merge_fields.PHONE || '') !== contact.telefono) return true;\n\n  // Comparar tag de categoría\n  const currentTags = mc.tags.map(t => t.toUpperCase());\n  if (!currentTags.includes(contact.categoria)) return true;\n\n  return false;\n}\n\nconst results = [];\n\nfor (const item of contacts) {\n  const c = item.json;\n\n  // Descartar contactos inválidos\n  if (!c._valid || c.categoria === 'DESCARTADO') {\n    results.push({ json: { ...c, _accion: 'ignorar', _motivo: 'descartado' } });\n    continue;\n  }\n\n  const mc = mcLookup[c.email];\n\n  if (!mc) {\n    // No existe en Mailchimp → crear\n    results.push({ json: { ...c, _accion: 'crear', _mc_status: null } });\n  } else if (mc.status === 'unsubscribed' || mc.status === 'cleaned') {\n    // Respetar unsubscribed/cleaned → no tocar\n    results.push({\n      json: { ...c, _accion: 'ignorar', _motivo: `mc_status=${mc.status}`, _mc_status: mc.status }\n    });\n  } else if (hasChanges(c, mc)) {\n    // Existe con cambios → actualizar\n    results.push({ json: { ...c, _accion: 'actualizar', _mc_status: mc.status, _mc_id: mc.id } });\n  } else {\n    // Sin cambios → ignorar\n    results.push({ json: { ...c, _accion: 'ignorar', _motivo: 'sin_cambios', _mc_status: mc.status } });\n  }\n}\n\nreturn results;"
+      },
+      "id": "d1a0b1c2-0001-4000-a000-000000000008",
+      "name": "Comparar y Decidir",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1660,
+        380
+      ]
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": ""
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json._accion }}",
+                    "rightValue": "crear",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "Crear"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": ""
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json._accion }}",
+                    "rightValue": "actualizar",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "Actualizar"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": ""
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json._accion }}",
+                    "rightValue": "ignorar",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    }
+                  }
+                ]
+              },
+              "renameOutput": true,
+              "outputKey": "Ignorar"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d1a0b1c2-0001-4000-a000-000000000009",
+      "name": "Accion por Contacto",
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.2,
+      "position": [
+        1900,
+        380
+      ]
+    },
+    {
+      "parameters": {
+        "resource": "member",
+        "operation": "create",
+        "list": "={{ $json.list_id || '' }}",
+        "email": "={{ $json.email }}",
+        "status": "subscribed",
+        "mergeFieldsUi": {
+          "mergeFieldsValues": [
+            {
+              "name": "FNAME",
+              "value": "={{ $json.nombre }}"
+            },
+            {
+              "name": "LNAME",
+              "value": "={{ $json.apellido }}"
+            },
+            {
+              "name": "PHONE",
+              "value": "={{ $json.telefono }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d1a0b1c2-0001-4000-a000-000000000010",
+      "name": "Crear en Mailchimp",
+      "type": "n8n-nodes-base.mailchimp",
+      "typeVersion": 1,
+      "position": [
+        2180,
+        200
+      ],
+      "credentials": {
+        "mailchimpApi": {
+          "id": "",
+          "name": "Mailchimp"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "member",
+        "operation": "update",
+        "list": "={{ $json.list_id || '' }}",
+        "email": "={{ $json.email }}",
+        "mergeFieldsUi": {
+          "mergeFieldsValues": [
+            {
+              "name": "FNAME",
+              "value": "={{ $json.nombre }}"
+            },
+            {
+              "name": "LNAME",
+              "value": "={{ $json.apellido }}"
+            },
+            {
+              "name": "PHONE",
+              "value": "={{ $json.telefono }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d1a0b1c2-0001-4000-a000-000000000011",
+      "name": "Actualizar en Mailchimp",
+      "type": "n8n-nodes-base.mailchimp",
+      "typeVersion": 1,
+      "position": [
+        2180,
+        400
+      ],
+      "credentials": {
+        "mailchimpApi": {
+          "id": "",
+          "name": "Mailchimp"
+        }
+      }
+    },
+    {
+      "parameters": {},
+      "id": "d1a0b1c2-0001-4000-a000-000000000012",
+      "name": "Sin Cambios",
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        2180,
+        600
+      ]
+    },
+    {
+      "parameters": {
+        "mode": "append",
+        "options": {}
+      },
+      "id": "d1a0b1c2-0001-4000-a000-000000000013",
+      "name": "Reagrupar Resultados",
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3,
+      "position": [
+        2460,
+        380
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// FILTRAR PARA TAGGING\n// ============================================\n// Solo enviar a tags los contactos que fueron\n// creados o actualizados (no ignorados/descartados)\n// y generar el hash MD5 necesario para la API.\n// ============================================\n\nconst crypto = require('crypto');\n\nconst results = [];\n\nfor (const item of $input.all()) {\n  const c = item.json;\n\n  // Solo taggear si fue creado o actualizado\n  if (c._accion === 'crear' || c._accion === 'actualizar') {\n    const emailHash = crypto\n      .createHash('md5')\n      .update(c.email.toLowerCase().trim())\n      .digest('hex');\n\n    results.push({\n      json: {\n        ...c,\n        _email_hash: emailHash\n      }\n    });\n  }\n}\n\n// Si no hay contactos para taggear, pasar vacío\nif (results.length === 0) {\n  results.push({ json: { _skip_tags: true } });\n}\n\nreturn results;"
+      },
+      "id": "d1a0b1c2-0001-4000-a000-000000000015",
+      "name": "Filtrar para Tags",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2700,
+        480
+      ]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://{{ $json._mc_server || 'usX' }}.api.mailchimp.com/3.0/lists/{{ $json._mc_list_id || '' }}/members/{{ $json._email_hash }}/tags",
+        "authentication": "predefinedCredentialType",
+        "nodeCredentialType": "mailchimpApi",
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={{ JSON.stringify({ tags: [ { name: $json.categoria, status: 'active' } ] }) }}",
+        "options": {
+          "batching": {
+            "batch": {
+              "batchSize": 10,
+              "batchInterval": 1000
+            }
+          }
+        }
+      },
+      "id": "d1a0b1c2-0001-4000-a000-000000000016",
+      "name": "Aplicar Tags MC",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.2,
+      "position": [
+        2940,
+        480
+      ],
+      "credentials": {
+        "mailchimpApi": {
+          "id": "",
+          "name": "Mailchimp"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "appendOrUpdate",
+        "documentId": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "sheetName": {
+          "__rl": true,
+          "mode": "list",
+          "value": ""
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Email": "={{ $json.email }}",
+            "Score": "={{ $json.score }}",
+            "Categoria": "={{ $json.categoria }}",
+            "Fecha Procesamiento": "={{ $json.fecha_procesamiento }}"
+          }
+        },
+        "options": {
+          "cellFormat": "USER_ENTERED",
+          "handlingExtraData": "insertInNewColumn"
+        }
+      },
+      "id": "d1a0b1c2-0001-4000-a000-000000000017",
+      "name": "Actualizar Sheet Resultados",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        3180,
+        380
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "",
+          "name": "Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// GENERAR REPORTE FINAL\n// ============================================\n// Resumen de ejecución con conteos por categoría\n// y detalle de acciones realizadas.\n// ============================================\n\nconst allItems = $('Comparar y Decidir').all();\n\nconst stats = {\n  total_procesados: allItems.length,\n  validos: 0,\n  invalidos: 0,\n  hot: 0,\n  warm: 0,\n  cold: 0,\n  descartados: 0,\n  creados_en_mc: 0,\n  actualizados_en_mc: 0,\n  ignorados: 0,\n  respetados_unsub: 0\n};\n\nconst hotLeads = [];\n\nfor (const item of allItems) {\n  const c = item.json;\n\n  if (c._valid) {\n    stats.validos++;\n  } else {\n    stats.invalidos++;\n  }\n\n  switch (c.categoria) {\n    case 'HOT': stats.hot++; hotLeads.push({ email: c.email, nombre: `${c.nombre} ${c.apellido}`, score: c.score, empresa: c.empresa }); break;\n    case 'WARM': stats.warm++; break;\n    case 'COLD': stats.cold++; break;\n    case 'DESCARTADO': stats.descartados++; break;\n  }\n\n  switch (c._accion) {\n    case 'crear': stats.creados_en_mc++; break;\n    case 'actualizar': stats.actualizados_en_mc++; break;\n    case 'ignorar':\n      stats.ignorados++;\n      if (c._motivo && c._motivo.startsWith('mc_status=')) stats.respetados_unsub++;\n      break;\n  }\n}\n\nconst reporte = {\n  timestamp: new Date().toISOString(),\n  resumen: `Procesados: ${stats.total_procesados} | HOT: ${stats.hot} | WARM: ${stats.warm} | COLD: ${stats.cold} | Descartados: ${stats.descartados}`,\n  estadisticas: stats,\n  hot_leads: hotLeads,\n  acciones_mailchimp: {\n    creados: stats.creados_en_mc,\n    actualizados: stats.actualizados_en_mc,\n    ignorados: stats.ignorados,\n    unsubscribed_respetados: stats.respetados_unsub\n  }\n};\n\nreturn [{ json: reporte }];"
+      },
+      "id": "d1a0b1c2-0001-4000-a000-000000000018",
+      "name": "Generar Reporte",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        3420,
+        380
+      ]
+    },
+    {
+      "parameters": {
+        "jsCode": "// ============================================\n// PREPARAR ITEMS PARA SHEET UPDATE\n// ============================================\n// Toma todos los contactos procesados y prepara\n// el formato para actualizar Google Sheets.\n// ============================================\n\nconst allContacts = $('Comparar y Decidir').all();\nconst results = [];\n\nfor (const item of allContacts) {\n  const c = item.json;\n  results.push({\n    json: {\n      email: c.email,\n      score: c.score || 0,\n      categoria: c.categoria || 'DESCARTADO',\n      fecha_procesamiento: c.fecha_procesamiento,\n      _row_number: c._row_number\n    }\n  });\n}\n\nreturn results;"
+      },
+      "id": "d1a0b1c2-0001-4000-a000-000000000019",
+      "name": "Preparar Update Sheet",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        2940,
+        300
+      ]
+    }
+  ],
+  "connections": {
+    "Inicio Manual": {
+      "main": [
+        [
+          {
+            "node": "Leer Contactos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Trigger Programado": {
+      "main": [
+        [
+          {
+            "node": "Leer Contactos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Leer Contactos": {
+      "main": [
+        [
+          {
+            "node": "Normalizar Datos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalizar Datos": {
+      "main": [
+        [
+          {
+            "node": "Calcular Score",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Calcular Score": {
+      "main": [
+        [
+          {
+            "node": "Clasificar Leads",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Clasificar Leads": {
+      "main": [
+        [
+          {
+            "node": "Obtener Miembros Mailchimp",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Obtener Miembros Mailchimp": {
+      "main": [
+        [
+          {
+            "node": "Comparar y Decidir",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Comparar y Decidir": {
+      "main": [
+        [
+          {
+            "node": "Accion por Contacto",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Accion por Contacto": {
+      "main": [
+        [
+          {
+            "node": "Crear en Mailchimp",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Actualizar en Mailchimp",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Sin Cambios",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Crear en Mailchimp": {
+      "main": [
+        [
+          {
+            "node": "Reagrupar Resultados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Actualizar en Mailchimp": {
+      "main": [
+        [
+          {
+            "node": "Reagrupar Resultados",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Sin Cambios": {
+      "main": [
+        [
+          {
+            "node": "Reagrupar Resultados",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "Reagrupar Resultados": {
+      "main": [
+        [
+          {
+            "node": "Filtrar para Tags",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Preparar Update Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filtrar para Tags": {
+      "main": [
+        [
+          {
+            "node": "Aplicar Tags MC",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Preparar Update Sheet": {
+      "main": [
+        [
+          {
+            "node": "Actualizar Sheet Resultados",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Actualizar Sheet Resultados": {
+      "main": [
+        [
+          {
+            "node": "Generar Reporte",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "pinData": {},
+  "settings": {
+    "executionOrder": "v1",
+    "saveManualExecutions": true,
+    "callerPolicy": "workflowsFromSameOwner",
+    "errorWorkflow": ""
+  },
+  "staticData": null,
+  "tags": [
+    {
+      "name": "CRM"
+    },
+    {
+      "name": "Scoring"
+    },
+    {
+      "name": "Mailchimp"
+    },
+    {
+      "name": "Producción"
+    }
+  ],
+  "triggerCount": 2,
+  "updatedAt": "2026-03-29T00:00:00.000Z",
+  "versionId": "bdd339a1-c8e9-48a3-a2a3-36d0be807a80",
+  "id": "Xj78onGV9y1zcTs5"
+}

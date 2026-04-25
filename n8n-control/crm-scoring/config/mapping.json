@@ -1,0 +1,83 @@
+{
+  "column_map": {
+    "email": ["email", "correo", "e-mail", "correo electrónico", "correo electronico"],
+    "nombre": ["nombre", "fname", "first name", "first_name", "primer nombre"],
+    "apellido": ["apellido", "lname", "last name", "last_name"],
+    "telefono": ["telefono", "teléfono", "phone", "tel", "celular", "móvil", "movil"],
+    "empresa": ["empresa", "company", "organización", "organizacion", "organization"],
+    "cargo": ["cargo", "puesto", "position", "job title", "job_title", "title", "rol"],
+    "origen": ["origen", "source", "fuente", "canal"],
+    "ultimo_contacto": ["ultimo contacto", "último contacto", "last contact", "last_contact", "fecha contacto", "fecha_contacto"],
+    "interacciones": ["interacciones", "interactions", "contactos", "touches"],
+    "estado": ["estado", "status", "activo"],
+    "notas": ["notas", "notes", "comentarios", "observaciones"]
+  },
+  "estado_activo_values": ["activo", "active", "si", "sí", "yes", "1", "true"],
+  "scoring": {
+    "recencia": {
+      "dias_7": 30,
+      "dias_14": 20,
+      "dias_30": 10,
+      "dias_60": 5,
+      "mas_60": 0
+    },
+    "interacciones": {
+      "mas_de_5": 25,
+      "entre_3_y_5": 20,
+      "entre_1_y_2": 10,
+      "ninguna": 0
+    },
+    "origen": {
+      "referido": 15,
+      "evento": 12,
+      "web": 8,
+      "red social": 6,
+      "linkedin": 6,
+      "otro": 3,
+      "desconocido": 0
+    },
+    "cargo": {
+      "alto": 15,
+      "medio": 10,
+      "bajo": 5,
+      "sin_dato": 0
+    },
+    "penalizaciones": {
+      "inactivo": -20,
+      "sin_telefono": -10,
+      "sin_empresa": -5,
+      "sin_nombre": -5
+    }
+  },
+  "cargos": {
+    "alto": ["dueño", "dueña", "director", "directora", "ceo", "gerente general", "fundador", "fundadora", "owner", "presidente", "presidenta", "socio", "socia", "cto", "cfo", "coo"],
+    "medio": ["gerente", "jefe", "jefa", "responsable", "encargado", "encargada", "manager", "lead", "head", "supervisor", "supervisora"],
+    "bajo": ["coordinador", "coordinadora", "analista", "asistente", "ejecutivo", "ejecutiva", "vendedor", "vendedora", "asesor", "asesora"]
+  },
+  "thresholds": {
+    "HOT": 60,
+    "WARM": 35,
+    "COLD": 15
+  },
+  "mailchimp": {
+    "list_id": "YOUR_LIST_ID",
+    "tags_prefix": "",
+    "merge_fields": {
+      "FNAME": "nombre",
+      "LNAME": "apellido",
+      "PHONE": "telefono",
+      "EMPRESA": "empresa",
+      "CARGO": "cargo",
+      "SCORE": "score"
+    }
+  },
+  "google_sheets": {
+    "spreadsheet_id": "YOUR_SPREADSHEET_ID",
+    "sheet_name": "Contactos",
+    "output_columns": {
+      "score": "Score",
+      "categoria": "Categoria",
+      "fecha_procesamiento": "Fecha Procesamiento"
+    }
+  }
+}

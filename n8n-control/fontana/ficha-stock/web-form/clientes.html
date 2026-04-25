@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Fontana - Clientes & Pedidos</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <!-- Toast container -->
+  <div id="toast-container"></div>
+
+  <!-- PIN overlay -->
+  <div id="pin-overlay" class="overlay">
+    <div class="overlay-card">
+      <h2>Acceso al Sistema</h2>
+      <p>Ingrese su PIN para continuar</p>
+      <input type="password" id="pin-input" class="input" placeholder="PIN" maxlength="10" inputmode="numeric" autocomplete="off" />
+      <button id="pin-submit" class="btn btn-primary btn-block">Ingresar</button>
+    </div>
+  </div>
+
+  <!-- Main app -->
+  <div id="app" class="hidden">
+    <header>
+      <div class="header-content">
+        <h1>Fontana</h1>
+        <p class="subtitle">Clientes & Pedidos</p>
+        <nav class="header-nav">
+          <a href="index.html" class="btn btn-sm btn-outline">&#128200; Stock</a>
+        </nav>
+      </div>
+    </header>
+
+    <main>
+      <!-- Tab navigation -->
+      <div class="tab-nav">
+        <button class="tab-btn active" data-tab="clientes">Clientes</button>
+        <button class="tab-btn" data-tab="pedidos">Pedidos</button>
+      </div>
+
+      <!-- ========== CLIENTES TAB ========== -->
+      <div id="tab-clientes" class="tab-content">
+
+        <!-- List view -->
+        <div id="cli-list-view">
+          <div class="cli-top-bar">
+            <input type="text" id="cli-buscar" class="input input-sm" placeholder="Buscar por nombre o telefono..." />
+            <button class="btn btn-sm btn-primary" id="cli-nuevo-btn">+ Nuevo</button>
+          </div>
+          <div id="cli-loading" class="loading hidden">
+            <div class="spinner"></div>
+            <p>Cargando clientes...</p>
+          </div>
+          <div id="cli-lista"></div>
+        </div>
+
+        <!-- Edit/Create view -->
+        <div id="cli-edit-view" class="hidden">
+          <div class="section-header">
+            <button class="btn-back" id="cli-back-lista">&larr; Volver</button>
+            <h2 id="cli-edit-title">Nuevo Cliente</h2>
+          </div>
+          <form id="form-cliente" class="card" novalidate>
+            <input type="hidden" id="cli-id" />
+            <div class="form-group">
+              <label for="cli-nombre">Nombre *</label>
+              <input type="text" id="cli-nombre" class="input" placeholder="Nombre completo" required />
+              <span class="field-error"></span>
+            </div>
+            <div class="form-group">
+              <label for="cli-telefono">Telefono *</label>
+              <input type="tel" id="cli-telefono" class="input" placeholder="Ej: 11-1234-5678" required />
+              <span class="field-error"></span>
+            </div>
+            <div class="form-group">
+              <label for="cli-email">Email</label>
+              <input type="email" id="cli-email" class="input" placeholder="ejemplo@email.com" />
+              <span class="field-error"></span>
+            </div>
+            <div class="form-group">
+              <label for="cli-direccion">Direccion</label>
+              <input type="text" id="cli-direccion" class="input" placeholder="Calle y numero" />
+            </div>
+            <div class="form-group">
+              <label for="cli-localidad">Localidad</label>
+              <input type="text" id="cli-localidad" class="input" placeholder="Ciudad / Barrio" />
+            </div>
+            <div class="form-group">
+              <label for="cli-notas">Notas</label>
+              <textarea id="cli-notas" class="input" rows="3" placeholder="Notas adicionales..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block" id="cli-submit-btn">Guardar Cliente</button>
+          </form>
+        </div>
+      </div>
+
+      <!-- ========== PEDIDOS TAB ========== -->
+      <div id="tab-pedidos" class="tab-content hidden">
+
+        <!-- List view -->
+        <div id="ped-list-view">
+          <!-- Status filter -->
+          <div class="ped-status-filter">
+            <button class="status-btn active" data-estado="">Todos</button>
+            <button class="status-btn" data-estado="Pendiente">Pendiente</button>
+            <button class="status-btn" data-estado="En producción">En prod.</button>
+            <button class="status-btn" data-estado="Listo para entregar">Listo</button>
+            <button class="status-btn" data-estado="Entregado">Entregado</button>
+          </div>
+          <div class="ped-top-bar">
+            <button class="btn btn-sm btn-primary" id="ped-nuevo-btn">+ Nuevo Pedido</button>
+            <button class="btn btn-sm btn-outline" id="ped-refresh-btn">Recargar</button>
+          </div>
+          <div id="ped-loading" class="loading hidden">
+            <div class="spinner"></div>
+            <p>Cargando pedidos...</p>
+          </div>
+          <div id="ped-lista"></div>
+        </div>
+
+        <!-- Create view -->
+        <div id="ped-edit-view" class="hidden">
+          <div class="section-header">
+            <button class="btn-back" id="ped-back-lista">&larr; Volver</button>
+            <h2>Nuevo Pedido</h2>
+          </div>
+          <form id="form-pedido" class="card" novalidate>
+            <div class="form-group">
+              <label for="ped-cliente">Cliente *</label>
+              <select id="ped-cliente" class="input" required>
+                <option value="">Seleccionar cliente...</option>
+              </select>
+              <span class="field-error"></span>
+            </div>
+
+            <!-- Items (muebles) -->
+            <h3 class="ped-items-title">Muebles del pedido *</h3>
+            <div id="ped-items-list"></div>
+            <button type="button" class="btn btn-sm btn-outline ped-add-item-btn" id="ped-add-item">+ Agregar mueble</button>
+
+            <div class="form-group" style="margin-top:20px">
+              <label for="ped-fecha-entrega">Fecha estimada de entrega</label>
+              <input type="date" id="ped-fecha-entrega" class="input" />
+            </div>
+            <div class="form-group">
+              <label>Importes ($)</label>
+              <div class="input-row">
+                <div class="input-col">
+                  <input type="text" id="ped-sena" class="input" placeholder="0" inputmode="decimal" />
+                  <span class="input-hint">Sena</span>
+                </div>
+                <div class="input-col">
+                  <input type="text" id="ped-total" class="input" placeholder="0" inputmode="decimal" />
+                  <span class="input-hint">Total</span>
+                </div>
+              </div>
+              <span class="field-error"></span>
+            </div>
+            <div class="form-group">
+              <label for="ped-notas">Notas</label>
+              <textarea id="ped-notas" class="input" rows="3" placeholder="Notas adicionales..."></textarea>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block" id="ped-submit-btn">Registrar Pedido</button>
+          </form>
+        </div>
+      </div>
+
+    </main>
+  </div>
+
+  <script src="clientes.js"></script>
+</body>
+</html>

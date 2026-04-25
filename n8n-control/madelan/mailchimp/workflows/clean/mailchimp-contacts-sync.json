@@ -1,0 +1,486 @@
+{
+  "name": "Mailchimp — Sync Contactos desde Sheets",
+  "active": false,
+  "nodes": [
+    {
+      "parameters": {
+        "assignments": {
+          "assignments": [
+            {
+              "id": "c1",
+              "name": "MAILCHIMP_LIST_ID",
+              "value": "52cbfb0a39",
+              "type": "string"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [
+        448,
+        448
+      ],
+      "id": "n-config",
+      "name": "Config"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Code node: Aplanar participantes + deduplicar por email + acumular tags\nconst items = $input.all();\n\n// La data viene como un array de remates dentro de body\nconst remates = items[0].json.body || items[0].json;\n\n// Map para deduplicar por email\nconst contactosPorEmail = new Map();\n\nfor (const remate of remates) {\n  const idRemate = remate.idRemate;\n  const tagsRemate = remate.tags || [];\n  \n  // Combinamos los tags del remate + el idRemate como tag\n  const tagsConId = [...tagsRemate, `remate-${idRemate}`];\n  \n  for (const participante of remate.participantes || []) {\n    const email = (participante.direccionCorreo || '').toLowerCase().trim();\n    \n    // Saltear emails vacíos o inválidos\n    if (!email || !email.includes('@')) continue;\n    \n    if (contactosPorEmail.has(email)) {\n      // Ya existe: acumular tags sin duplicar\n      const existente = contactosPorEmail.get(email);\n      for (const tag of tagsConId) {\n        if (!existente.tags.includes(tag)) {\n          existente.tags.push(tag);\n        }\n      }\n    } else {\n      // Nuevo: crear entrada\n      contactosPorEmail.set(email, {\n        email: email,\n        alias: participante.alias || '',\n        tags: [...tagsConId]\n      });\n    }\n  }\n}\n\n// Convertir el Map a array de items para n8n\nconst resultado = Array.from(contactosPorEmail.values()).map(contacto => ({\n  json: {\n    email: contacto.email,\n    alias: contacto.alias,\n    tags: contacto.tags\n  }\n}));\n\nreturn resultado;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        912,
+        448
+      ],
+      "id": "n-normalizar",
+      "name": "Normalizar Contactos"
+    },
+    {
+      "parameters": {
+        "content": "## 1. Source\nLee contactos de Google Sheets.\nConfigurar: spreadsheet ID + hoja + credencial OAuth2.",
+        "height": 376,
+        "width": 460,
+        "color": 6
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        352,
+        240
+      ],
+      "id": "sn-1",
+      "name": "Nota Source"
+    },
+    {
+      "parameters": {
+        "content": "## 2. Normalización\nMapea columnas del Sheets al formato MC.\nemail: lowercase + trim\nestado: Activo→subscribed, Inactivo→unsubscribed\ntipo: se usa como tag",
+        "height": 380,
+        "width": 260,
+        "color": 4
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        832,
+        240
+      ],
+      "id": "sn-2",
+      "name": "Nota Normalizar"
+    },
+    {
+      "parameters": {
+        "content": "## 3. Mailchimp\n**Upsert**: crea si no existe, actualiza si existe.\n**Tag**: asigna tipo como etiqueta.\nRetry x3, continueOnError.\nNodos 100% nativos.",
+        "height": 600,
+        "width": 1108,
+        "color": 3
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        1104,
+        240
+      ],
+      "id": "sn-3",
+      "name": "Nota Mailchimp"
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "list": "52cbfb0a39",
+        "email": "={{ $json.email }}",
+        "updateFields": {}
+      },
+      "type": "n8n-nodes-base.mailchimp",
+      "typeVersion": 1,
+      "position": [
+        2000,
+        432
+      ],
+      "id": "n-upsert",
+      "name": "Update Contacto",
+      "retryOnFail": true,
+      "maxTries": 3,
+      "waitBetweenTries": 2000,
+      "onError": "continueRegularOutput"
+    },
+    {
+      "parameters": {
+        "operation": "getAll",
+        "list": "={{ $('Config').item.json.MAILCHIMP_LIST_ID }}",
+        "returnAll": true,
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mailchimp",
+      "typeVersion": 1,
+      "position": [
+        1344,
+        448
+      ],
+      "id": "a4313adb-aef7-4eb5-887d-8913be22a1fd",
+      "name": "Get many members"
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1152,
+        448
+      ],
+      "id": "45a6d3cf-f215-4e21-b569-5dd3a993f1ab",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "jsCode": "// Code node: Reconciliación source (REST) vs destino (Mailchimp)\n// Outputs: create | update | update_tags | skip\n\nconst aggregateData = $(\"Aggregate\").first().json.data || [];\nconst mailchimpItems = $(\"Get many members\").all();\n\n// Map de Mailchimp por email\nconst membersByEmail = new Map();\nfor (const item of mailchimpItems) {\n  const m = item.json;\n  const email = (m.email_address || '').toLowerCase().trim();\n  if (email) {\n    membersByEmail.set(email, {\n      status: m.status,\n      tags: (m.tags || []).map(t => t.name || t),\n      merge_fields: m.merge_fields || {},\n      full_name: m.full_name || ''\n    });\n  }\n}\n\n// Reconciliar\nconst output = [];\n\nfor (const contacto of aggregateData) {\n  const email = (contacto.email || '').toLowerCase().trim();\n  if (!email) continue;\n\n  const sourceTags = contacto.tags || [];\n  const alias = contacto.alias || '';\n\n  const found = membersByEmail.get(email);\n\n  if (!found) {\n    // No existe → crear\n    output.push({\n      json: {\n        action: 'create',\n        email,\n        alias,\n        tags: sourceTags\n      }\n    });\n  } else {\n    // Ya existe → verificar qué cambió\n    const tagsActuales = found.tags;\n    const tagsNuevos = sourceTags.filter(t => !tagsActuales.includes(t));\n\n    // Comparar alias con lo que hay en Mailchimp\n    const aliasActual = (found.full_name || '').trim();\n    const aliasCambio = alias && alias !== aliasActual;\n\n    if (aliasCambio && tagsNuevos.length > 0) {\n      // Cambió alias Y tiene tags nuevos → update (hace ambas cosas)\n      output.push({\n        json: {\n          action: 'update',\n          email,\n          alias,\n          tags_agregar: tagsNuevos,\n          tags_actuales: tagsActuales,\n          tags_final: [...tagsActuales, ...tagsNuevos]\n        }\n      });\n    } else if (aliasCambio) {\n      // Solo cambió alias → update\n      output.push({\n        json: {\n          action: 'update',\n          email,\n          alias,\n          tags_actuales: tagsActuales\n        }\n      });\n    } else if (tagsNuevos.length > 0) {\n      // Solo tags nuevos → update_tags\n      output.push({\n        json: {\n          action: 'update_tags',\n          email,\n          alias,\n          tags_agregar: tagsNuevos,\n          tags_actuales: tagsActuales,\n          tags_final: [...tagsActuales, ...tagsNuevos]\n        }\n      });\n    } else {\n      // Sin cambios → skip\n      output.push({\n        json: {\n          action: 'skip',\n          email,\n          alias\n        }\n      });\n    }\n  }\n}\n\n// Resumen\nconst resumen = {\n  total: output.length,\n  crear: output.filter(i => i.json.action === 'create').length,\n  update: output.filter(i => i.json.action === 'update').length,\n  update_tags: output.filter(i => i.json.action === 'update_tags').length,\n  skip: output.filter(i => i.json.action === 'skip').length\n};\n\nconsole.log('Reconciliación:', JSON.stringify(resumen));\n\nreturn output;"
+      },
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        1520,
+        448
+      ],
+      "id": "d2dd1122-94e5-4a70-8fd9-eee2f8c57f5d",
+      "name": "reconciliacion"
+    },
+    {
+      "parameters": {
+        "list": "52cbfb0a39",
+        "email": "={{ $json.email }}",
+        "status": "subscribed",
+        "options": {
+          "tags": "={{ $json.tags.join(', ') }}"
+        }
+      },
+      "type": "n8n-nodes-base.mailchimp",
+      "typeVersion": 1,
+      "position": [
+        2000,
+        256
+      ],
+      "id": "5f0778c2-a95d-409a-a7cf-38cf7736b249",
+      "name": "Create a member"
+    },
+    {
+      "parameters": {
+        "url": "https://restprueba.madelan.com.ar/tornado/v3.4/participantes/fechaDesde=2026-01-01&fechaHasta=2026-03-30",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "options": {
+          "response": {
+            "response": {
+              "fullResponse": true,
+              "responseFormat": "json"
+            }
+          }
+        }
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        656,
+        448
+      ],
+      "id": "1e55fe99-ad67-47e7-a46c-a7404c306a9b",
+      "name": "HTTP Request"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "weeks",
+              "triggerAtDay": [
+                5
+              ]
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        208,
+        448
+      ],
+      "id": "77a91703-1a72-4782-967f-6697e1726729",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "rules": {
+          "values": [
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "create",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals"
+                    },
+                    "id": "e7b54f2a-82cc-42dd-94ee-aa1bdf67d3ae"
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Crear"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "81d746ae-16bd-4e44-97f9-c15c672d4aa7",
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "update",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Update Contact"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "9c85b0bc-f080-4e6c-b6e0-cf3cb054051d",
+                    "leftValue": "={{ $json.action }}",
+                    "rightValue": "update_tags",
+                    "operator": {
+                      "type": "string",
+                      "operation": "equals",
+                      "name": "filter.operator.equals"
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Update Tags"
+            },
+            {
+              "conditions": {
+                "options": {
+                  "caseSensitive": true,
+                  "leftValue": "",
+                  "typeValidation": "strict",
+                  "version": 3
+                },
+                "conditions": [
+                  {
+                    "id": "5fb14de5-8be0-4f21-be72-2b763126ead1",
+                    "leftValue": "={{ true }}",
+                    "rightValue": "",
+                    "operator": {
+                      "type": "boolean",
+                      "operation": "true",
+                      "singleValue": true
+                    }
+                  }
+                ],
+                "combinator": "and"
+              },
+              "renameOutput": true,
+              "outputKey": "Skip"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.switch",
+      "typeVersion": 3.4,
+      "position": [
+        1696,
+        416
+      ],
+      "id": "4b9aacf2-cb2a-4dc8-92ce-f3b9785f043c",
+      "name": "Switch"
+    },
+    {
+      "parameters": {
+        "resource": "memberTag",
+        "list": "52cbfb0a39",
+        "email": "={{ $json.email }}",
+        "tags": [
+          []
+        ],
+        "options": {}
+      },
+      "type": "n8n-nodes-base.mailchimp",
+      "typeVersion": 1,
+      "position": [
+        2000,
+        624
+      ],
+      "id": "6ca782e9-2fa6-4406-938a-ee039cb1875a",
+      "name": "Create a member tag"
+    },
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.noOp",
+      "typeVersion": 1,
+      "position": [
+        1696,
+        688
+      ],
+      "id": "de0363d8-c7af-4d0f-82a2-5830bf7cbe7d",
+      "name": "Skip"
+    }
+  ],
+  "connections": {
+    "Config": {
+      "main": [
+        [
+          {
+            "node": "HTTP Request",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Normalizar Contactos": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Update Contacto": {
+      "main": [
+        []
+      ]
+    },
+    "Get many members": {
+      "main": [
+        [
+          {
+            "node": "reconciliacion",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Get many members",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "reconciliacion": {
+      "main": [
+        [
+          {
+            "node": "Switch",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "HTTP Request": {
+      "main": [
+        [
+          {
+            "node": "Normalizar Contactos",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Config",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Switch": {
+      "main": [
+        [
+          {
+            "node": "Create a member",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Update Contacto",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Create a member tag",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Skip",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "callerPolicy": "workflowsFromSameOwner",
+    "availableInMCP": false
+  },
+  "staticData": null,
+  "pinData": {},
+  "tags": []
+}
